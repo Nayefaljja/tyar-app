@@ -1,0 +1,232 @@
+/* Additional branding styles to enhance eco-friendly theme */
+
+:root {
+    /* Enhanced color palette based on Tyar logo */
+    --primary-color: #2A8D8D;      /* Darker teal from logo */
+    --secondary-color: #4ECDC4;    /* Medium teal */
+    --accent-color: #4EE2A7;       /* Bright green from logo */
+    --dark-color: #333333;         /* Dark gray for text */
+    --light-color: #F7F7F7;        /* Light gray for backgrounds */
+    --text-color: #333333;         /* Default text color */
+    --light-text: #FFFFFF;         /* White text */
+    
+    /* Additional brand colors */
+    --leaf-green: #5CB85C;         /* Natural green for eco elements */
+    --sky-blue: #5BC0DE;           /* Clean energy blue */
+    --soft-green: #E8F5E9;         /* Very light green for backgrounds */
+    --earth-brown: #8D6E63;        /* Earth tone for accents */
+}
+
+/* Logo enhancements */
+.logo {
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo-container {
+    position: relative;
+}
+
+/* Add leaf animation to logo on hover */
+.logo-container::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: var(--accent-color);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z'/%3E%3C/svg%3E");
+    mask-size: cover;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z'/%3E%3C/svg%3E");
+    -webkit-mask-size: cover;
+    top: -5px;
+    right: -5px;
+    opacity: 0;
+    transform: rotate(45deg);
+    transition: opacity 0.3s ease, transform 0.5s ease;
+}
+
+.logo-container:hover::after {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+/* Enhanced eco-friendly section backgrounds */
+.hero {
+    background: linear-gradient(135deg, var(--soft-green) 0%, #e4e8eb 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234ecdc4' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Nature-inspired visual elements */
+.section-header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent-color);
+    margin: 15px auto 0;
+}
+
+/* Eco-friendly button styles */
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: 0.5s;
+}
+
+.btn-primary:hover::after {
+    left: 100%;
+}
+
+/* Enhanced feature cards with leaf accents */
+.feature-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: var(--accent-color);
+    opacity: 0.1;
+    top: -15px;
+    right: -15px;
+    border-radius: 50%;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.feature-card:hover::before {
+    transform: scale(2.5);
+    opacity: 0.15;
+}
+
+/* Eco-friendly form styling */
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2) !important;
+    outline: none;
+}
+
+/* Footer eco badge enhancement */
+.eco-badge {
+    position: relative;
+    padding-left: 30px;
+}
+
+.eco-badge i {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent-color);
+    font-size: 1.2rem;
+}
+
+/* Animated wave footer */
+footer {
+    position: relative;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' fill='%23f7f7f7' opacity='.25'%3E%3C/path%3E%3Cpath d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' fill='%23f7f7f7' opacity='.5'%3E%3C/path%3E%3Cpath d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' fill='%23f7f7f7'%3E%3C/path%3E%3C/svg%3E");
+    background-size: cover;
+    background-position: center;
+}
+
+/* Eco-friendly icons and accents */
+.feature-icon, .service-icon {
+    position: relative;
+}
+
+.feature-icon::after, .service-icon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: var(--accent-color);
+    opacity: 0.1;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon::after,
+.service-card:hover .service-icon::after {
+    transform: scale(1.5);
+}
+
+/* Enhanced about section with eco elements */
+.about-content {
+    position: relative;
+}
+
+.about-content::before {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: var(--accent-color);
+    opacity: 0.05;
+    border-radius: 50%;
+    top: -20px;
+    left: -20px;
+    z-index: 0;
+}
+
+.eco-stats {
+    position: relative;
+    z-index: 1;
+}
+
+/* Responsive adjustments for branding elements */
+@media (max-width: 768px) {
+    .hero::before {
+        opacity: 0.3;
+    }
+    
+    footer::before {
+        top: -30px;
+        height: 30px;
+    }
+}

@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"C:\\\\Users\\\\nayef\\\\Downloads\\\\tyar-app-20260328T094137Z-3-001\\\\tyar-app\"\" && ls \"C:UsersnayefDownloadstyar-app-20260328T094137Z-3-001\"\")",
+      "Bash(dir \"C:\\\\Users\\\\nayef\\\\Downloads\\\\tyar-app-20260328T094137Z-3-001\\\\tyar-app\")",
+      "Bash(dir \"C:\\\\Users\\\\nayef\\\\Downloads\\\\tyar-app-20260328T094137Z-3-001\")",
+      "Bash(where npx:*)",
+      "Bash(where node:*)",
+      "Bash(where python:*)",
+      "Bash(where python3:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(timeout /t 2 /nobreak)",
+      "Bash(node -e ':*)",
+      "Bash(npx expo:*)",
+      "Bash(node --input-type=module)",
+      "Bash(ipconfig)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /PID 49628 /F)",
+      "Bash(cmd /c \"taskkill /PID 49628 /F\")",
+      "Bash(cmd /c \"taskkill /F /PID 49628\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(cmd /c \"netsh advfirewall firewall add rule name=\\\\\"Expo Metro\\\\\" dir=in action=allow protocol=TCP localport=8081\")",
+      "Bash(cmd /c \"for /f \\\\\"tokens=5\\\\\" %a in \\('netstat -ano ^| findstr :8081 ^| findstr LISTENING'\\) do taskkill /F /PID %a\")",
+      "Bash(cmd /c \"netstat -ano | findstr :8081 | findstr LISTENING\")",
+      "Bash(cmd /c \"netsh advfirewall firewall show rule name=\\\\\"Expo Metro\\\\\"\")",
+      "Bash(cmd /c \"netsh advfirewall firewall add rule name=\\\\\"Expo Metro\\\\\" dir=in action=allow protocol=TCP localport=8081 && netsh advfirewall firewall add rule name=\\\\\"Expo Metro\\\\\" dir=out action=allow protocol=TCP localport=8081\")",
+      "Bash(cmd /c \"winget install Google.PlatformTools\")",
+      "Bash(cmd /c \"winget install Google.PlatformTools --accept-package-agreements --accept-source-agreements\")",
+      "Bash(cmd /c \"winget install Google.PlatformTools --accept-package-agreements --accept-source-agreements 2>&1\")",
+      "Bash(powershell -Command \"winget install Google.PlatformTools --accept-package-agreements --accept-source-agreements\")",
+      "Bash(cmd /c \"ipconfig\")",
+      "Bash(cmd /c \"ipconfig 2>&1\")",
+      "mcp__plugin_supabase_supabase__list_organizations",
+      "mcp__plugin_supabase_supabase__list_projects",
+      "mcp__plugin_supabase_supabase__restore_project",
+      "mcp__plugin_supabase_supabase__get_project_url",
+      "mcp__plugin_supabase_supabase__get_publishable_keys",
+      "mcp__plugin_supabase_supabase__apply_migration",
+      "mcp__plugin_supabase_supabase__execute_sql"
+    ]
+  }
+}

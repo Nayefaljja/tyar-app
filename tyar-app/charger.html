@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طيار - تركيب شاحن السيارة الكهربائية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="supabase.js" defer></script>
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary: #3CAEA3;
+            --primary-dark: #2a8d83;
+            --primary-light: #5ecfc4;
+            --accent: #f0c040;
+            --bg: #f5f7fa;
+            --bg-card: #ffffff;
+            --card-bg: #ffffff;
+            --text: #1a2332;
+            --text-muted: #6b7a8d;
+            --border: #e2e8f0;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 32px rgba(60,174,163,0.18);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --header-height: 70px;
+        }
+        body.dark-mode {
+            --bg: #0f1621;
+            --bg-card: #1a2332;
+            --card-bg: #1a2332;
+            --text: #e8edf5;
+            --text-muted: #8fa0b5;
+            --border: #2a3a4f;
+            --shadow: 0 4px 20px rgba(0,0,0,0.35);
+        }
+
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
+            padding-top: 72px;
+        }
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        button { font-family: 'Tajawal', sans-serif; cursor: pointer; border: none; outline: none; }
+        input, select, textarea { font-family: 'Tajawal', sans-serif; }
+
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(135deg, #0f3d3a 0%, #1a5c57 40%, #3CAEA3 100%);
+            padding: 80px 0 70px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .hero .container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        .hero-content { flex: 1; }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.25;
+            margin-bottom: 16px;
+        }
+        .hero h1 span { color: var(--accent); }
+        .hero p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.85);
+            max-width: 480px;
+            margin-bottom: 32px;
+        }
+        .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--primary);
+            color: #fff;
+            padding: 13px 28px;
+            border-radius: var(--radius-sm);
+            font-size: 1rem; font-weight: 700;
+            transition: var(--transition);
+            border: none; cursor: pointer;
+        }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(60,174,163,0.4); color: #fff; }
+        .btn-outline-white {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: transparent;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: var(--radius-sm);
+            border: 2px solid rgba(255,255,255,0.5);
+            font-size: 1rem; font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-outline-white:hover { background: rgba(255,255,255,0.12); border-color: #fff; }
+
+        .hero-stats {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat .num { font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1; }
+        .hero-stat .lbl { font-size: 0.8rem; color: rgba(255,255,255,0.75); margin-top: 4px; }
+
+        .hero-visual {
+            flex: 0 0 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .charger-icon-big {
+            width: 160px; height: 160px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 4.5rem;
+            color: #fff;
+            box-shadow: 0 0 60px rgba(60,174,163,0.5);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 40px rgba(60,174,163,0.4); }
+            50% { box-shadow: 0 0 80px rgba(60,174,163,0.7); }
+        }
+
+        @media (max-width: 768px) {
+            .hero .container { flex-direction: column; text-align: center; }
+            .hero p { margin: 0 auto 28px; }
+            .hero-actions { justify-content: center; }
+            .hero-stats { justify-content: center; }
+            .hero-visual { display: none; }
+        }
+
+        /* ===== SECTION GENERIC ===== */
+        section { padding: 72px 0; }
+        .section-header {
+            text-align: center;
+            margin-bottom: 52px;
+        }
+        .section-header .section-tag {
+            display: inline-block;
+            background: rgba(60,174,163,0.1);
+            color: var(--primary);
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 50px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .section-header h2 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        /* ===== CHARGER TYPES ===== */
+        .charger-types-section { background: var(--bg); }
+        .charger-types-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+        @media (max-width: 700px) { .charger-types-grid { grid-template-columns: 1fr; } }
+
+        .charger-type-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .charger-type-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(60,174,163,0) 0%, rgba(60,174,163,0.04) 100%);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .charger-type-card:hover,
+        .charger-type-card.selected {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+        }
+        .charger-type-card:hover::before,
+        .charger-type-card.selected::before { opacity: 1; }
+        .charger-type-card.selected::after {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .card-icon-wrap {
+            width: 72px; height: 72px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .card-icon-wrap.home-icon { background: rgba(60,174,163,0.12); color: var(--primary); }
+        .card-icon-wrap.commercial-icon { background: rgba(94,126,210,0.12); color: #5e7ed2; }
+
+        .charger-type-card h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
+        .charger-type-card .power-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.82rem; font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 50px;
+            margin-bottom: 14px;
+        }
+        .charger-type-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 18px; }
+
+        .charger-features {
+            display: flex; flex-direction: column; gap: 8px;
+            margin-bottom: 20px;
+        }
+        .charger-features li {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.9rem; color: var(--text-muted);
+        }
+        .charger-features li i { color: var(--primary); font-size: 0.8rem; flex-shrink: 0; }
+
+        .price-range {
+            background: linear-gradient(135deg, rgba(60,174,163,0.1), rgba(60,174,163,0.05));
+            border: 1px solid rgba(60,174,163,0.2);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .price-range .price-label { font-size: 0.82rem; color: var(--text-muted); }
+        .price-range .price-value { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+
+        .select-type-btn {
+            width: 100%;
+            margin-top: 16px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 11px;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem; font-weight: 600;
+            transition: var(--transition);
+        }
+        .charger-type-card:hover .select-type-btn,
+        .charger-type-card.selected .select-type-btn {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        /* ===== INSTALLATION STEPS ===== */
+        .steps-section { background: linear-gradient(180deg, var(--bg) 0%, rgba(60,174,163,0.04) 100%); }
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            position: relative;
+        }
+        .steps-grid::before {
+            content: '';
+            position: absolute;
+            top: 36px;
+            right: 12.5%;
+            left: 12.5%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            opacity: 0.3;
+            z-index: 0;
+        }
+        @media (max-width: 900px) {
+            .steps-grid { grid-template-columns: repeat(2, 1fr); }
+            .steps-grid::before { display: none; }
+        }
+        @media (max-width: 500px) { .steps-grid { grid-template-columns: 1fr; } }
+
+        .step-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .step-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
+
+        .step-num {
+            position: absolute;
+            top: -14px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 28px; height: 28px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.8rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--bg);
+        }
+        .step-icon-wrap {
+            width: 72px; height: 72px;
+            background: rgba(60,174,163,0.1);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+        .step-card h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+        .step-card p { font-size: 0.88rem; color: var(--text-muted); }
+
+        /* ===== SERVICE REQUEST FORM ===== */
+        .form-section { background: var(--bg-card); }
+        .form-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 40px;
+            border: 1px solid var(--border);
+        }
+        @media (max-width: 600px) { .form-wrapper { padding: 24px 16px; } }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+        .form-grid .full { grid-column: 1 / -1; }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label {
+            font-size: 0.9rem; font-weight: 600;
+            color: var(--text);
+        }
+        .form-group label span.req { color: #e05252; margin-right: 3px; }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            direction: rtl;
+            width: 100%;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(60,174,163,0.1);
+        }
+        .form-group input.error-field,
+        .form-group select.error-field,
+        .form-group textarea.error-field {
+            border-color: #e05252;
+            box-shadow: 0 0 0 3px rgba(224,82,82,0.08);
+        }
+        .field-error {
+            font-size: 0.82rem;
+            color: #e05252;
+            display: none;
+        }
+        .field-error.visible { display: block; }
+
+        .charger-type-radios {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        @media (max-width: 400px) { .charger-type-radios { grid-template-columns: 1fr; } }
+
+        .type-radio-label {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-card);
+        }
+        .type-radio-label:hover { border-color: var(--primary); }
+        .type-radio-label input[type="radio"] { accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; }
+        .type-radio-label input[type="radio"]:checked ~ .radio-text { color: var(--primary); }
+        .type-radio-label:has(input:checked) {
+            border-color: var(--primary);
+            background: rgba(60,174,163,0.06);
+        }
+        .radio-text { font-size: 0.92rem; font-weight: 600; }
+        .radio-sub { font-size: 0.78rem; color: var(--text-muted); display: block; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: var(--radius-sm);
+            font-size: 1.05rem; font-weight: 700;
+            transition: var(--transition);
+            border: none; cursor: pointer;
+            margin-top: 8px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .submit-btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(60,174,163,0.35); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* ===== SUCCESS CARD ===== */
+        .success-card {
+            display: none;
+            background: linear-gradient(135deg, rgba(60,174,163,0.08), rgba(60,174,163,0.02));
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+        .success-card.show { display: block; animation: fadeInUp 0.5s ease; }
+        .success-icon {
+            width: 80px; height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(60,174,163,0.4);
+        }
+        .success-card h3 { font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+        .success-card p { color: var(--text-muted); margin-bottom: 20px; }
+        .ref-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 1.1rem; font-weight: 800;
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
+        }
+        .success-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .btn-new-request {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem; font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-new-request:hover { background: var(--primary); color: #fff; }
+
+        /* ===== STATUS TRACKER ===== */
+        .tracker-section { background: var(--bg); }
+        .tracker-wrapper {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+        .tracker-search {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .tracker-search input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 1rem;
+            direction: rtl;
+            transition: var(--transition);
+        }
+        .tracker-search input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(60,174,163,0.1);
+        }
+        .tracker-search button {
+            background: var(--primary);
+            color: #fff;
+            padding: 14px 22px;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem; font-weight: 700;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        .tracker-search button:hover { background: var(--primary-dark); }
+
+        .status-result { display: none; animation: fadeInUp 0.4s ease; }
+        .status-result.show { display: block; }
+        .status-not-found {
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px dashed var(--border);
+        }
+        .status-not-found i { font-size: 2.5rem; color: var(--text-muted); margin-bottom: 12px; display: block; }
+        .status-not-found p { color: var(--text-muted); font-size: 1rem; }
+
+        .status-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 32px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .status-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .status-card-header h4 { font-size: 1.2rem; font-weight: 800; }
+        .status-badge {
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.82rem; font-weight: 700;
+        }
+        .status-badge.pending { background: rgba(240,192,64,0.15); color: #b8920a; }
+        .status-badge.confirmed { background: rgba(60,174,163,0.12); color: var(--primary-dark); }
+        .status-badge.completed { background: rgba(68,180,100,0.12); color: #2d8048; }
+
+        .status-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 28px;
+        }
+        .status-timeline::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            left: 40px;
+            height: 2px;
+            background: var(--border);
+        }
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 1;
+            flex: 1;
+        }
+        .timeline-dot {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .timeline-step.done .timeline-dot {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+        .timeline-step.active .timeline-dot {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #333;
+        }
+        .timeline-step p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 70px;
+        }
+        .timeline-step.done p,
+        .timeline-step.active p { color: var(--text); font-weight: 600; }
+
+        .status-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 16px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        @media (max-width: 500px) { .status-details-grid { grid-template-columns: 1fr; } }
+        .detail-item { display: flex; flex-direction: column; gap: 3px; }
+        .detail-item .detail-label { font-size: 0.78rem; color: var(--text-muted); }
+        .detail-item .detail-value { font-size: 0.92rem; font-weight: 600; }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #0f1621;
+            color: rgba(255,255,255,0.75);
+            padding: 56px 0 0;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr 1fr 1fr;
+            gap: 40px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 500px) { .footer-grid { grid-template-columns: 1fr; } }
+
+        .footer-brand .logo { filter: brightness(0) invert(1); height: 40px; margin-bottom: 12px; }
+        .footer-brand p { font-size: 0.9rem; line-height: 1.65; }
+        .footer-social { display: flex; gap: 10px; margin-top: 16px; }
+        .footer-social a {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            transition: var(--transition);
+        }
+        .footer-social a:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+        .footer-col h4 {
+            font-size: 0.9rem; font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer-col ul { display: flex; flex-direction: column; gap: 8px; }
+        .footer-col ul li a {
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.6);
+            transition: var(--transition);
+        }
+        .footer-col ul li a:hover { color: var(--primary); padding-right: 4px; }
+
+        .footer-bottom {
+            padding: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .footer-bottom p { font-size: 0.85rem; color: rgba(255,255,255,0.4); }
+        .eco-badge {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.82rem;
+            color: rgba(60,174,163,0.8);
+        }
+
+        /* ===== WHATSAPP FLOAT ===== */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            width: 58px; height: 58px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.7rem;
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(37,211,102,0.45);
+            z-index: 900;
+            transition: var(--transition);
+        }
+        .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 10px 28px rgba(37,211,102,0.55); color: #fff; }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up { animation: fadeInUp 0.6s ease both; }
+
+        /* ===== DARK MODE EXTRAS ===== */
+        body.dark-mode header { background: #1a2332; border-color: #2a3a4f; }
+        body.dark-mode footer { background: #080e17; }
+        body.dark-mode .form-group input,
+        body.dark-mode .form-group select,
+        body.dark-mode .form-group textarea,
+        body.dark-mode .tracker-search input {
+            background: #1a2332;
+            border-color: #2a3a4f;
+            color: #e8edf5;
+        }
+        body.dark-mode .form-group input::placeholder,
+        body.dark-mode .tracker-search input::placeholder { color: #8fa0b5; }
+
+        /* ===== SCROLL TO TOP ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 46px; height: 46px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            z-index: 900;
+            opacity: 0; pointer-events: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 14px rgba(60,174,163,0.4);
+        }
+        .scroll-top.visible { opacity: 1; pointer-events: all; }
+        .scroll-top:hover { background: var(--primary-dark); transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+    <div class="hdr-wrap">
+        <div class="logo-wrap">
+            <a href="index.html">
+                <img src="images/tyar-logo-transparent.png" alt="TYAR">
+            </a>
+        </div>
+        <div class="header-actions">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html" data-en="Home">الرئيسية</a></li>
+                    <li><a href="marketplace.html" data-en="Car Marketplace">سوق السيارات</a></li>
+                    <li><a href="charger.html" class="active" data-en="Charger Installation">تركيب الشواحن</a></li>
+                    <li><a href="maintenance.html" data-en="Maintenance">الصيانة</a></li>
+                    <li><a href="index.html#faq" data-en="FAQ">الأسئلة الشائعة</a></li>
+                </ul>
+            </nav>
+            <button class="dark-toggle" id="darkToggle"><i class="fas fa-moon" id="darkIcon"></i></button>
+            <button class="lang-toggle" id="langBtn">
+                <i class="fas fa-globe"></i>
+                <span data-lang-label>العربية</span>
+            </button>
+            <button class="hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+<nav class="mobile-nav" id="mobileNav">
+    <a href="index.html" data-en="Home">الرئيسية</a>
+    <a href="marketplace.html" data-en="Car Marketplace">سوق السيارات</a>
+    <a href="charger.html" class="active" data-en="Charger Installation">تركيب الشواحن</a>
+    <a href="maintenance.html" data-en="Maintenance">الصيانة</a>
+    <a href="index.html#faq" data-en="FAQ">الأسئلة الشائعة</a>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-bolt"></i>
+                <span data-en="Professional EV Charger Installation">خدمة تركيب شاحن EV الاحترافية</span>
+            </div>
+            <h1 data-en='Install Your <span>EV Charger</span><br>at Home or Work'>تركيب <span>شاحن السيارة</span><br>الكهربائية</h1>
+            <p data-en="We provide the best home and commercial EV charging solutions in Saudi Arabia by certified specialists.">نوفر لك أفضل حلول الشحن المنزلي والتجاري في المملكة العربية السعودية بأيدي متخصصين معتمدين</p>
+            <div class="hero-actions">
+                <a href="#form-section" class="btn-primary">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span data-en="Book Now">احجز الآن</span>
+                </a>
+                <a href="#tracker-section" class="btn-outline-white">
+                    <i class="fas fa-search"></i>
+                    <span data-en="Track Your Request">تتبع طلبك</span>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat"><div class="num">+500</div><div class="lbl" data-en="Installations Done">تركيب مكتمل</div></div>
+                <div class="hero-stat"><div class="num">48h</div><div class="lbl" data-en="Response Time">وقت الاستجابة</div></div>
+                <div class="hero-stat"><div class="num">5★</div><div class="lbl" data-en="Customer Rating">تقييم العملاء</div></div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="charger-icon-big">
+                <i class="fas fa-charging-station"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CHARGER TYPES ===== -->
+<section class="charger-types-section" id="charger-types">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag" data-en="Charger Types">أنواع الشواحن</span>
+            <h2 data-en="Choose the Right Charger">اختر الشاحن المناسب لك</h2>
+            <p data-en="We offer complete charging solutions for home and commercial use with the highest quality and safety standards.">نقدم حلول شحن متكاملة للاستخدام المنزلي والتجاري بأعلى معايير الجودة والأمان</p>
+        </div>
+        <div class="charger-types-grid">
+            <!-- Home Charger -->
+            <div class="charger-type-card" id="card-home" onclick="selectChargerType('home')">
+                <div class="card-icon-wrap home-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h3 data-en="Home Charger">شاحن منزلي</h3>
+                <span class="power-badge"><i class="fas fa-bolt"></i> 7 kW</span>
+                <p data-en="Ideal for daily use and overnight charging at home. Fully charges your EV in a few hours with smart app control.">مثالي للاستخدام اليومي والشحن الليلي في المنزل. يشحن سيارتك بالكامل خلال ساعات قليلة مع إمكانية التحكم الذكي عبر التطبيق.</p>
+                <ul class="charger-features">
+                    <li><i class="fas fa-check-circle"></i> <span data-en="7x faster than a standard outlet">شحن أسرع 7 مرات من المخرج العادي</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span data-en="Smart app control">تحكم ذكي عبر التطبيق</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span data-en="Energy usage monitoring">مراقبة استهلاك الطاقة</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span data-en="Weather-resistant design">تصميم مقاوم للطقس</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span data-en="Compatible with all EVs">توافق مع جميع السيارات الكهربائية</span></li>
+                </ul>
+                <div class="price-range">
+                    <span class="price-label" data-en="Price Range">نطاق السعر</span>
+                    <span class="price-value">2,500 – 4,500 SAR</span>
+                </div>
+                <button class="select-type-btn" data-en="Select This Type">اختر هذا النوع</button>
+            </div>
+            <!-- Commercial Charger -->
+            <div class="charger-type-card" id="card-commercial" onclick="selectChargerType('commercial')">
+                <div class="card-icon-wrap commercial-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3 data-en="Commercial Charger">شاحن تجاري</h3>
+                <span class="power-badge"><i class="fas fa-bolt"></i> 22+ kW</span>
+                <p data-en="Professional solution for commercial complexes, offices, and parking lots. Supports charging multiple EVs simultaneously with a analytics dashboard and payment management.">حل احترافي للمجمعات التجارية والمكاتب ومواقف السيارات. يدعم شحن عدة سيارات في آنٍ واحد مع لوحة تحكم للتحليلات وإدارة المدفوعات.</p>
+                <ul class="charger-features">
+                    <li><i class="fas fa-check-circle"></i> <span data-en="Multiple charging points">نقاط شحن متعددة</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span data-en="Payment gateway support">دعم بوابات الدفع الإلكتروني</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span data-en="Usage analytics dashboard">لوحة تحكم وتحليلات الاستهلاك</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span data-en="Load balancing technology">تقنية موازنة الأحمال</span></li>
+                    <li><i class="fas fa-check-circle"></i> <span data-en="Periodic maintenance & annual warranty">صيانة دورية وضمان سنوي</span></li>
+                </ul>
+                <div class="price-range">
+                    <span class="price-label" data-en="Price Range">نطاق السعر</span>
+                    <span class="price-value">8,000 – 25,000 SAR</span>
+                </div>
+                <button class="select-type-btn" data-en="Select This Type">اختر هذا النوع</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== INSTALLATION STEPS ===== -->
+<section class="steps-section" id="steps">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag" data-en="How It Works">كيف يعمل</span>
+            <h2 data-en="Installation Steps">خطوات التركيب</h2>
+            <p data-en="A smooth, professional process from first request to final handover.">عملية سلسة واحترافية من أول طلب حتى التسليم النهائي</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <div class="step-icon-wrap"><i class="fas fa-file-alt"></i></div>
+                <h4 data-en="Service Request">طلب الخدمة</h4>
+                <p data-en="Submit your request via the form and our team will contact you within 24 hours.">أرسل طلبك عبر النموذج وسيتواصل معك فريقنا خلال 24 ساعة</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <div class="step-icon-wrap"><i class="fas fa-map-marker-alt"></i></div>
+                <h4 data-en="Site Assessment">تقييم الموقع</h4>
+                <p data-en="Our engineers visit your location to assess the electrical setup and determine the best installation spot.">يقوم مهندسونا بزيارة الموقع لتقييم البنية الكهربائية وتحديد أفضل مكان للتركيب</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <div class="step-icon-wrap"><i class="fas fa-tools"></i></div>
+                <h4 data-en="Installation">التركيب</h4>
+                <p data-en="Professional installation by certified electricians following Saudi safety standards.">تركيب احترافي بواسطة كهربائيين معتمدين وفق أعلى معايير السلامة السعودية</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">4</div>
+                <div class="step-icon-wrap"><i class="fas fa-check-double"></i></div>
+                <h4 data-en="Testing & Handover">الاختبار والتسليم</h4>
+                <p data-en="Full device testing and handover with complete instructions and written warranty.">اختبار شامل للجهاز وتسليمه مع كامل التعليمات والضمان المكتوب</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SERVICE REQUEST FORM ===== -->
+<section class="form-section" id="form-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag" data-en="Book Now">احجز الآن</span>
+            <h2 data-en="Installation Service Request">طلب خدمة التركيب</h2>
+            <p data-en="Complete the form below and our team will contact you as soon as possible.">أكمل النموذج أدناه وسيتواصل فريقنا معك في أقرب وقت</p>
+        </div>
+
+        <!-- Form -->
+        <div class="form-wrapper" id="formWrapper">
+            <form id="chargerForm" novalidate>
+                <div class="form-grid">
+                    <!-- Name -->
+                    <div class="form-group">
+                        <label for="fullName"><span class="req">*</span><span data-en="Full Name">الاسم الكامل</span></label>
+                        <input type="text" id="fullName" placeholder="محمد عبدالله" autocomplete="name" data-en-ph="Mohammed Abdullah" data-ar-ph="محمد عبدالله">
+                        <span class="field-error" id="err-fullName" data-en="Please enter your full name">يرجى إدخال الاسم الكامل</span>
+                    </div>
+                    <!-- Phone -->
+                    <div class="form-group">
+                        <label for="phone"><span class="req">*</span><span data-en="Mobile Number">رقم الجوال</span></label>
+                        <input type="tel" id="phone" placeholder="05xxxxxxxx" autocomplete="tel" maxlength="10">
+                        <span class="field-error" id="err-phone" data-en="Number must start with 05 and be 10 digits">يجب أن يبدأ الرقم بـ 05 ويتكون من 10 أرقام</span>
+                    </div>
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email"><span class="req">*</span><span data-en="Email Address">البريد الإلكتروني</span></label>
+                        <input type="email" id="email" placeholder="example@email.com" autocomplete="email">
+                        <span class="field-error" id="err-email" data-en="Please enter a valid email address">يرجى إدخال بريد إلكتروني صحيح</span>
+                    </div>
+                    <!-- City -->
+                    <div class="form-group">
+                        <label for="city"><span class="req">*</span><span data-en="City">المدينة</span></label>
+                        <select id="city">
+                            <option value="">-- اختر المدينة --</option>
+                            <option value="الرياض">الرياض</option>
+                            <option value="جدة">جدة</option>
+                            <option value="الدمام">الدمام</option>
+                            <option value="مكة المكرمة">مكة المكرمة</option>
+                            <option value="المدينة المنورة">المدينة المنورة</option>
+                            <option value="الخبر">الخبر</option>
+                            <option value="الطائف">الطائف</option>
+                            <option value="أبها">أبها</option>
+                            <option value="بريدة">بريدة</option>
+                            <option value="تبوك">تبوك</option>
+                            <option value="حائل">حائل</option>
+                            <option value="جازان">جازان</option>
+                            <option value="نجران">نجران</option>
+                            <option value="الجبيل">الجبيل</option>
+                            <option value="ينبع">ينبع</option>
+                        </select>
+                        <span class="field-error" id="err-city">يرجى اختيار المدينة</span>
+                    </div>
+                    <!-- Address -->
+                    <div class="form-group full">
+                        <label for="address"><span class="req">*</span>العنوان التفصيلي</label>
+                        <input type="text" id="address" placeholder="الحي، الشارع، رقم المبنى...">
+                        <span class="field-error" id="err-address">يرجى إدخال العنوان التفصيلي</span>
+                    </div>
+                    <!-- Charger Type -->
+                    <div class="form-group full">
+                        <label><span class="req">*</span>نوع الشاحن</label>
+                        <div class="charger-type-radios">
+                            <label class="type-radio-label" id="radio-home-label">
+                                <input type="radio" name="chargerType" value="home" id="radioHome">
+                                <div>
+                                    <span class="radio-text"><i class="fas fa-home" style="color:var(--primary);margin-left:6px"></i>شاحن منزلي</span>
+                                    <span class="radio-sub">7 كيلوواط – للاستخدام المنزلي</span>
+                                </div>
+                            </label>
+                            <label class="type-radio-label" id="radio-commercial-label">
+                                <input type="radio" name="chargerType" value="commercial" id="radioCommercial">
+                                <div>
+                                    <span class="radio-text"><i class="fas fa-building" style="color:#5e7ed2;margin-left:6px"></i>شاحن تجاري</span>
+                                    <span class="radio-sub">22+ كيلوواط – للمجمعات والشركات</span>
+                                </div>
+                            </label>
+                        </div>
+                        <span class="field-error" id="err-chargerType">يرجى اختيار نوع الشاحن</span>
+                    </div>
+                    <!-- Preferred Date -->
+                    <div class="form-group">
+                        <label for="prefDate"><span class="req">*</span>التاريخ المفضل للتركيب</label>
+                        <input type="date" id="prefDate">
+                        <span class="field-error" id="err-prefDate">يرجى اختيار تاريخ مستقبلي</span>
+                    </div>
+                    <!-- Notes -->
+                    <div class="form-group">
+                        <label for="notes">ملاحظات إضافية</label>
+                        <textarea id="notes" rows="3" placeholder="أي تفاصيل إضافية تود إضافتها..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    إرسال الطلب
+                </button>
+            </form>
+        </div>
+
+        <!-- Success Card -->
+        <div class="success-card" id="successCard">
+            <div class="success-icon"><i class="fas fa-check"></i></div>
+            <h3>تم إرسال طلبك بنجاح!</h3>
+            <p>سيتواصل معك فريقنا خلال 24 ساعة على رقم الجوال المُدخل</p>
+            <div class="ref-badge" id="refBadge">رقم الطلب: #...</div>
+            <p style="font-size:0.9rem;margin-bottom:20px">احتفظ برقم الطلب لتتبع حالة خدمتك</p>
+            <div class="success-actions">
+                <button class="btn-new-request" onclick="resetForm()">
+                    <i class="fas fa-plus"></i> طلب جديد
+                </button>
+                <a href="#tracker-section" class="btn-primary" style="font-size:0.92rem;padding:10px 20px">
+                    <i class="fas fa-search"></i> تتبع الطلب
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== STATUS TRACKER ===== -->
+<section class="tracker-section" id="tracker-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">تتبع طلبك</span>
+            <h2>متابعة حالة الطلب</h2>
+            <p>أدخل رقم طلبك للاطلاع على الحالة الراهنة وتفاصيل موعد التركيب</p>
+        </div>
+        <div class="tracker-wrapper">
+            <div class="tracker-search">
+                <input type="text" id="trackInput" placeholder="أدخل رقم الطلب مثلاً: TYR-1712345678">
+                <button onclick="trackRequest()">
+                    <i class="fas fa-search"></i> بحث
+                </button>
+            </div>
+            <div id="statusResult" class="status-result"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <img src="images/tyar-logo-transparent.png" alt="طيار" class="logo">
+                <p>طيار – رائدة حلول السيارات الكهربائية في المملكة العربية السعودية. نوفر خدمات البيع والشحن والصيانة بأعلى مستوى من الجودة.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>خدماتنا</h4>
+                <ul>
+                    <li><a href="marketplace.html">سوق السيارات الكهربائية</a></li>
+                    <li><a href="charger.html">تركيب الشواحن</a></li>
+                    <li><a href="maintenance.html">الصيانة والخدمات</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>الشركة</h4>
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="index.html#about">من نحن</a></li>
+                    <li><a href="index.html#contact">تواصل معنا</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>قانوني</h4>
+                <ul>
+                    <li><a href="#">سياسة الخصوصية</a></li>
+                    <li><a href="#">شروط الخدمة</a></li>
+                    <li><a href="#">سياسة ملفات تعريف الارتباط</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 طيار. جميع الحقوق محفوظة.</p>
+            <div class="eco-badge"><i class="fas fa-leaf"></i> ملتزمون بالاستدامة البيئية</div>
+        </div>
+    </div>
+</footer>
+
+<!-- WhatsApp Float -->
+<a href="https://wa.me/966500000000" class="whatsapp-float" target="_blank" rel="noopener" title="تواصل معنا عبر واتساب">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- Scroll Top -->
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<script>
+// ============================================================
+//  DARK MODE
+// ============================================================
+const darkToggle = document.getElementById('darkToggle');
+const darkIcon   = document.getElementById('darkIcon');
+
+function applyDark(isDark) {
+    document.body.classList.toggle('dark-mode', isDark);
+    darkIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+}
+applyDark(localStorage.getItem('tyar_dark') === 'true');
+darkToggle.addEventListener('click', () => {
+    const isDark = !document.body.classList.contains('dark-mode');
+    applyDark(isDark);
+    localStorage.setItem('tyar_dark', isDark);
+});
+
+// ============================================================
+//  HAMBURGER MENU
+// ============================================================
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+});
+document.addEventListener('click', (e) => {
+    if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) {
+        hamburger.classList.remove('open');
+        mobileNav.classList.remove('open');
+    }
+});
+
+// ============================================================
+//  SCROLL TOP
+// ============================================================
+window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+
+// ============================================================
+//  CHARGER TYPE CARD SELECTION (syncs with form radios)
+// ============================================================
+function selectChargerType(type) {
+    document.getElementById('card-home').classList.toggle('selected', type === 'home');
+    document.getElementById('card-commercial').classList.toggle('selected', type === 'commercial');
+    const radio = document.getElementById(type === 'home' ? 'radioHome' : 'radioCommercial');
+    if (radio) radio.checked = true;
+    // Scroll to form
+    document.getElementById('form-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Keep cards in sync when radios change
+document.querySelectorAll('input[name="chargerType"]').forEach(r => {
+    r.addEventListener('change', () => {
+        document.getElementById('card-home').classList.toggle('selected', r.value === 'home' && r.checked);
+        document.getElementById('card-commercial').classList.toggle('selected', r.value === 'commercial' && r.checked);
+    });
+});
+
+// ============================================================
+//  SET MIN DATE FOR DATE PICKER
+// ============================================================
+(function setMinDate() {
+    const d = document.getElementById('prefDate');
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    d.min = tomorrow.toISOString().split('T')[0];
+})();
+
+// ============================================================
+//  FORM VALIDATION HELPERS
+// ============================================================
+function showError(fieldId, msg) {
+    const field = document.getElementById(fieldId);
+    const err   = document.getElementById('err-' + fieldId);
+    if (!field || !err) return;
+    field.classList.add('error-field');
+    if (msg) err.textContent = msg;
+    err.classList.add('visible');
+}
+function clearError(fieldId) {
+    const field = document.getElementById(fieldId);
+    const err   = document.getElementById('err-' + fieldId);
+    if (!field || !err) return;
+    field.classList.remove('error-field');
+    err.classList.remove('visible');
+}
+
+// Live clear on input
+['fullName','phone','email','city','address','prefDate'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => clearError(id));
+    if (el) el.addEventListener('change', () => clearError(id));
+});
+
+function validateForm() {
+    let valid = true;
+
+    // Full name
+    const name = document.getElementById('fullName').value.trim();
+    if (!name) { showError('fullName', 'يرجى إدخال الاسم الكامل'); valid = false; }
+    else clearError('fullName');
+
+    // Phone
+    const phone = document.getElementById('phone').value.trim();
+    if (!/^05\d{8}$/.test(phone)) { showError('phone', 'يجب أن يبدأ الرقم بـ 05 ويتكون من 10 أرقام'); valid = false; }
+    else clearError('phone');
+
+    // Email
+    const email = document.getElementById('email').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('email', 'يرجى إدخال بريد إلكتروني صحيح'); valid = false; }
+    else clearError('email');
+
+    // City
+    const city = document.getElementById('city').value;
+    if (!city) { showError('city', 'يرجى اختيار المدينة'); valid = false; }
+    else clearError('city');
+
+    // Address
+    const address = document.getElementById('address').value.trim();
+    if (!address) { showError('address', 'يرجى إدخال العنوان التفصيلي'); valid = false; }
+    else clearError('address');
+
+    // Charger type
+    const type = document.querySelector('input[name="chargerType"]:checked');
+    if (!type) { showError('chargerType', 'يرجى اختيار نوع الشاحن'); valid = false; }
+    else clearError('chargerType');
+
+    // Date
+    const dateVal = document.getElementById('prefDate').value;
+    if (!dateVal) {
+        showError('prefDate', 'يرجى اختيار تاريخ مفضل'); valid = false;
+    } else {
+        const selected = new Date(dateVal);
+        const today    = new Date(); today.setHours(0,0,0,0);
+        if (selected <= today) { showError('prefDate', 'يجب أن يكون التاريخ في المستقبل'); valid = false; }
+        else clearError('prefDate');
+    }
+
+    return valid;
+}
+
+// ============================================================
+//  FORM SUBMIT → SAVE TO LOCALSTORAGE
+// ============================================================
+document.getElementById('chargerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+
+    setTimeout(() => {
+        const ts  = Date.now();
+        const ref = 'TYR-' + ts;
+
+        const request = {
+            id:          ref,
+            timestamp:   ts,
+            status:      'pending',
+            fullName:    document.getElementById('fullName').value.trim(),
+            phone:       document.getElementById('phone').value.trim(),
+            email:       document.getElementById('email').value.trim(),
+            city:        document.getElementById('city').value,
+            address:     document.getElementById('address').value.trim(),
+            chargerType: document.querySelector('input[name="chargerType"]:checked').value,
+            prefDate:    document.getElementById('prefDate').value,
+            notes:       document.getElementById('notes').value.trim()
+        };
+
+        // Save to localStorage
+        const existing = JSON.parse(localStorage.getItem('tyar_charger_requests') || '[]');
+        existing.push(request);
+        localStorage.setItem('tyar_charger_requests', JSON.stringify(existing));
+
+        // Show success card
+        document.getElementById('formWrapper').style.display = 'none';
+        document.getElementById('refBadge').textContent = 'رقم الطلب: #' + ref;
+        document.getElementById('successCard').classList.add('show');
+        document.getElementById('successCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الطلب';
+    }, 900);
+});
+
+function resetForm() {
+    document.getElementById('chargerForm').reset();
+    document.getElementById('formWrapper').style.display = '';
+    document.getElementById('successCard').classList.remove('show');
+    document.getElementById('card-home').classList.remove('selected');
+    document.getElementById('card-commercial').classList.remove('selected');
+    ['fullName','phone','email','city','address','chargerType','prefDate'].forEach(clearError);
+    document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============================================================
+//  STATUS TRACKER
+// ============================================================
+function trackRequest() {
+    const ref = document.getElementById('trackInput').value.trim();
+    const resultEl = document.getElementById('statusResult');
+    resultEl.classList.remove('show');
+    resultEl.innerHTML = '';
+
+    if (!ref) {
+        resultEl.innerHTML = `<div class="status-not-found"><i class="fas fa-exclamation-circle"></i><p>يرجى إدخال رقم الطلب أولاً</p></div>`;
+        resultEl.classList.add('show');
+        return;
+    }
+
+    const requests = JSON.parse(localStorage.getItem('tyar_charger_requests') || '[]');
+    const found    = requests.find(r => r.id === ref || r.id.toLowerCase() === ref.toLowerCase());
+
+    if (!found) {
+        resultEl.innerHTML = `
+            <div class="status-not-found">
+                <i class="fas fa-search"></i>
+                <p>لم يتم العثور على طلبك</p>
+                <p style="font-size:0.85rem;margin-top:8px">تأكد من رقم الطلب وحاول مرة أخرى</p>
+            </div>`;
+        resultEl.classList.add('show');
+        return;
+    }
+
+    const statusMap = {
+        pending:   { label: 'قيد الانتظار',       badge: 'pending',   step: 0 },
+        confirmed: { label: 'تم التأكيد',          badge: 'confirmed', step: 1 },
+        assessed:  { label: 'تم تقييم الموقع',    badge: 'confirmed', step: 2 },
+        installed: { label: 'تم التركيب',          badge: 'confirmed', step: 3 },
+        completed: { label: 'مكتمل',               badge: 'completed', step: 4 }
+    };
+    const info  = statusMap[found.status] || statusMap['pending'];
+    const steps = [
+        { icon: 'fas fa-file-alt',        label: 'استلام الطلب' },
+        { icon: 'fas fa-phone-alt',       label: 'التأكيد' },
+        { icon: 'fas fa-map-marker-alt',  label: 'تقييم الموقع' },
+        { icon: 'fas fa-tools',           label: 'التركيب' }
+    ];
+
+    const typeLabel = found.chargerType === 'home' ? 'شاحن منزلي (7 كيلوواط)' : 'شاحن تجاري (22+ كيلوواط)';
+    const dateStr   = found.prefDate
+        ? new Date(found.prefDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })
+        : '—';
+    const createdStr = new Date(found.timestamp).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const stepsHtml = steps.map((s, i) => {
+        const cls = i < info.step ? 'done' : (i === info.step ? 'active' : '');
+        const ico = i < info.step ? 'fas fa-check' : s.icon;
+        return `
+        <div class="timeline-step ${cls}">
+            <div class="timeline-dot"><i class="${ico}"></i></div>
+            <p>${s.label}</p>
+        </div>`;
+    }).join('');
+
+    resultEl.innerHTML = `
+        <div class="status-card">
+            <div class="status-card-header">
+                <h4>طلب رقم: ${found.id}</h4>
+                <span class="status-badge ${info.badge}">${info.label}</span>
+            </div>
+            <div class="status-timeline">${stepsHtml}</div>
+            <div class="status-details-grid">
+                <div class="detail-item">
+                    <span class="detail-label">الاسم</span>
+                    <span class="detail-value">${found.fullName}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">رقم الجوال</span>
+                    <span class="detail-value">${found.phone}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">المدينة</span>
+                    <span class="detail-value">${found.city}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">نوع الشاحن</span>
+                    <span class="detail-value">${typeLabel}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">التاريخ المفضل</span>
+                    <span class="detail-value">${dateStr}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">تاريخ الطلب</span>
+                    <span class="detail-value">${createdStr}</span>
+                </div>
+                ${found.notes ? `<div class="detail-item" style="grid-column:1/-1">
+                    <span class="detail-label">ملاحظات</span>
+                    <span class="detail-value">${found.notes}</span>
+                </div>` : ''}
+            </div>
+        </div>`;
+    resultEl.classList.add('show');
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Allow Enter key in tracker input
+document.getElementById('trackInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') trackRequest();
+});
+</script>
+<script src="lang.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "TYAR | تيار",
+    "slug": "tyar-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f2744"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.tyar.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#0f2744"
+      },
+      "package": "com.tyar.app"
+    },
+    "web": {
+      "favicon": "./assets/logo.png"
+    }
+  }
+}

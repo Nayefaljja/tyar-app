@@ -1,0 +1,348 @@
+/* ============================================================
+   TYAR — Shared Header Styles
+   Premium EV Platform · Saudi Arabia
+   Used by: index.html, marketplace.html, charger.html, maintenance.html
+   ============================================================ */
+
+/* ── Header Shell ─────────────────────────────────────────── */
+header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    height: 72px;
+
+    /* Frosted glass — adapts to light/dark */
+    background: rgba(255, 255, 255, .88);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+
+    border-bottom: 1px solid rgba(60, 174, 163, .14);
+    box-shadow:
+        0 1px 0 rgba(60, 174, 163, .06),
+        0 4px 24px rgba(15, 39, 68, .07);
+
+    transition:
+        background .30s ease,
+        box-shadow .30s ease,
+        border-color .30s ease;
+}
+
+/* Scrolled state — applied via JS by adding class .scrolled to <header> */
+header.scrolled {
+    background: rgba(255, 255, 255, .96);
+    box-shadow:
+        0 1px 0 rgba(60, 174, 163, .10),
+        0 8px 32px rgba(15, 39, 68, .12);
+}
+
+/* Reserve space below the fixed header */
+body { padding-top: 72px; }
+
+/* ── Inner Layout ─────────────────────────────────────────── */
+.hdr-wrap {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 28px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* ── Logo ─────────────────────────────────────────────────── */
+.logo-wrap a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: opacity .2s;
+}
+
+.logo-wrap a:hover { opacity: .82; }
+
+.logo-wrap img {
+    height: 46px;
+    width: auto;
+    display: block;
+}
+
+/* ── Header Actions (nav + controls) ─────────────────────── */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Desktop Nav ──────────────────────────────────────────── */
+nav { display: flex; align-items: center; }
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: nowrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    position: relative;
+    display: block;
+    padding: 9px 15px;
+    border-radius: 10px;
+    font-size: .95rem;
+    font-weight: 500;
+    color: var(--text, #0f2744);
+    white-space: nowrap;
+    text-decoration: none;
+    letter-spacing: .01em;
+    transition: color .22s ease, background .22s ease;
+}
+
+/* Underline accent on hover */
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 15px; right: 15px;
+    height: 2px;
+    border-radius: 1px;
+    background: linear-gradient(90deg, var(--primary, #3CAEA3), #4EE2A7);
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform .25s cubic-bezier(.4, 0, .2, 1);
+}
+
+html[dir="ltr"] .nav-links a::after { transform-origin: left center; }
+
+.nav-links a:hover {
+    color: var(--primary, #3CAEA3);
+    background: rgba(60, 174, 163, .06);
+}
+
+.nav-links a:hover::after { transform: scaleX(1); }
+
+.nav-links a.active {
+    color: var(--primary, #3CAEA3);
+    font-weight: 700;
+    background: rgba(60, 174, 163, .08);
+}
+
+.nav-links a.active::after { transform: scaleX(1); }
+
+/* ── Language Toggle ──────────────────────────────────────── */
+.lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 15px;
+    border-radius: 50px;
+    background: none;
+    border: 1.5px solid var(--border, #d1e8e5);
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--text-muted, #7a94b0);
+    white-space: nowrap;
+    transition: border-color .22s ease, color .22s ease, background .22s ease;
+}
+
+.lang-toggle:hover {
+    border-color: var(--primary, #3CAEA3);
+    color: var(--primary, #3CAEA3);
+    background: rgba(60, 174, 163, .06);
+}
+
+/* ── Dark Mode Toggle ─────────────────────────────────────── */
+.dark-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border, #d1e8e5);
+    background: rgba(60, 174, 163, .07);
+    color: var(--primary, #3CAEA3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .22s ease, color .22s ease, border-color .22s ease, transform .22s ease;
+}
+
+.dark-toggle:hover {
+    background: var(--primary, #3CAEA3);
+    color: #fff;
+    border-color: var(--primary, #3CAEA3);
+    transform: rotate(22deg) scale(1.08);
+}
+
+/* ── Hamburger ────────────────────────────────────────────── */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    padding: 7px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 8px;
+    transition: background .2s;
+}
+
+.hamburger:hover { background: rgba(60, 174, 163, .08); }
+
+.hamburger span {
+    display: block;
+    width: 24px;
+    height: 2.5px;
+    background: var(--text, #0f2744);
+    border-radius: 2px;
+    transition: transform .30s cubic-bezier(.4, 0, .2, 1), opacity .28s ease;
+}
+
+/* Open/close X animation */
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ── Mobile Navigation Drawer ─────────────────────────────── */
+.mobile-nav {
+    display: none;
+    flex-direction: column;
+    background: var(--card-bg, #ffffff);
+    border-bottom: 1px solid var(--border, #d1e8e5);
+    padding: 14px 28px 24px;
+    gap: 4px;
+    list-style: none;
+    z-index: 999;
+    position: relative;
+
+    /* Subtle shadow to separate from content */
+    box-shadow: 0 8px 24px rgba(15, 39, 68, .08);
+}
+
+.mobile-nav.open { display: flex; }
+
+.mobile-nav a {
+    display: block;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text, #0f2744);
+    text-decoration: none;
+    transition: color .22s ease, background .22s ease;
+    position: relative;
+}
+
+.mobile-nav a::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 50%; transform: translateY(-50%);
+    width: 3px; height: 0;
+    border-radius: 2px;
+    background: var(--primary, #3CAEA3);
+    transition: height .22s ease;
+}
+
+.mobile-nav a:hover,
+.mobile-nav a.active {
+    color: var(--primary, #3CAEA3);
+    background: rgba(60, 174, 163, .07);
+}
+
+.mobile-nav a:hover::before,
+.mobile-nav a.active::before { height: 60%; }
+
+/* ── Responsive breakpoints ───────────────────────────────── */
+@media (max-width: 960px) {
+    .hamburger    { display: flex; }
+    .nav-links    { display: none; }
+    .lang-toggle  { padding: 5px 11px; font-size: .8rem; }
+}
+
+@media (max-width: 480px) {
+    .hdr-wrap { padding: 0 18px; }
+    .logo-wrap img { height: 40px; }
+    .dark-toggle { width: 36px; height: 36px; font-size: .9rem; }
+}
+
+/* ── Dark Mode ────────────────────────────────────────────── */
+body.dark-mode header,
+html[data-theme="dark"] header {
+    background: rgba(7, 14, 26, .92);
+    border-bottom-color: rgba(60, 174, 163, .12);
+    box-shadow:
+        0 1px 0 rgba(60, 174, 163, .08),
+        0 4px 28px rgba(0, 0, 0, .40);
+}
+
+body.dark-mode header.scrolled,
+html[data-theme="dark"] header.scrolled {
+    background: rgba(7, 14, 26, .97);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, .55);
+}
+
+body.dark-mode .mobile-nav,
+html[data-theme="dark"] .mobile-nav {
+    background: var(--card-bg, #0f1f35);
+    border-bottom-color: var(--border, #1a3352);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, .40);
+}
+
+body.dark-mode .hamburger span,
+html[data-theme="dark"] .hamburger span {
+    background: var(--text, #e2f0ff);
+}
+
+body.dark-mode .dark-toggle,
+html[data-theme="dark"] .dark-toggle {
+    background: rgba(60, 174, 163, .10);
+    border-color: var(--border, #1a3352);
+    color: var(--primary, #3CAEA3);
+}
+
+body.dark-mode .lang-toggle,
+html[data-theme="dark"] .lang-toggle {
+    border-color: var(--border, #1a3352);
+    color: var(--text-muted, #506a86);
+}
+
+body.dark-mode .lang-toggle:hover,
+html[data-theme="dark"] .lang-toggle:hover {
+    border-color: var(--primary, #3CAEA3);
+    color: var(--primary, #3CAEA3);
+}
+
+body.dark-mode .nav-links a,
+html[data-theme="dark"] .nav-links a {
+    color: var(--text, #e2f0ff);
+}
+
+body.dark-mode .nav-links a:hover,
+html[data-theme="dark"] .nav-links a:hover,
+body.dark-mode .nav-links a.active,
+html[data-theme="dark"] .nav-links a.active {
+    color: var(--primary, #3CAEA3);
+}
+
+/* ── Scroll-triggered transparency (progressive enhancement) ── */
+/* JS can toggle header.transparent when hero is in view */
+header.transparent {
+    background: transparent;
+    border-bottom-color: transparent;
+    box-shadow: none;
+}
+
+header.transparent .nav-links a { color: rgba(255,255,255,.85); }
+header.transparent .nav-links a:hover,
+header.transparent .nav-links a.active { color: #4EE2A7; }
+header.transparent .hamburger span { background: rgba(255,255,255,.9); }
+header.transparent .dark-toggle  { border-color: rgba(255,255,255,.25); color: rgba(255,255,255,.85); }
+header.transparent .lang-toggle  { border-color: rgba(255,255,255,.25); color: rgba(255,255,255,.75); }

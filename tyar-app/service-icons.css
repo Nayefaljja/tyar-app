@@ -1,0 +1,126 @@
+/* Styles for the new services showcase section with iconic representations */
+
+.services-showcase {
+    background-color: #fff;
+    padding: 80px 0;
+}
+
+.service-icons {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 50px 0;
+}
+
+.service-icon-container {
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.service-icon-container:hover {
+    transform: translateY(-10px);
+}
+
+.service-icon-link {
+    text-decoration: none;
+    color: var(--dark-color);
+    display: block;
+}
+
+.service-icon-circle {
+    width: 150px;
+    height: 120px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.service-icon-circle::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.service-icon-container:hover .service-icon-circle::before {
+    opacity: 1;
+}
+
+.service-icon-circle i {
+    position: relative;
+    z-index: 2;
+}
+
+.service-icon-container h3 {
+    font-size: 1.5rem;
+    margin-top: 15px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.services-description {
+    max-width: 800px;
+    margin: 40px auto 0;
+    text-align: center;
+}
+
+.services-description p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.services-cta {
+    margin-top: 30px;
+}
+
+/* RTL support for service icons */
+body.rtl .service-icons {
+    flex-direction: row-reverse;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .service-icons {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+    
+    body.rtl .service-icons {
+        flex-direction: column;
+    }
+    
+    .service-icon-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .service-icon-circle i {
+        font-size: 2.5rem !important;
+    }
+}
+
+/* Arabic translations for service icons */
+body.rtl .service-icon-container:nth-child(1) h3 {
+    content: "سوق السيارات الكهربائية";
+}
+
+body.rtl .service-icon-container:nth-child(2) h3 {
+    content: "تركيب الشواحن";
+}
+
+body.rtl .service-icon-container:nth-child(3) h3 {
+    content: "الصيانة";
+}

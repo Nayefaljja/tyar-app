@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طيار - حجز صيانة السيارات الكهربائية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="supabase.js" defer></script>
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary:       #3CAEA3;
+            --primary-dark:  #2b8a80;
+            --primary-light: #e8f7f6;
+            --accent:        #27ae60;
+            --accent-light:  #e9f7ef;
+            --text:          #1a2b2b;
+            --text-muted:    #6b8080;
+            --bg:            #f4fafa;
+            --card-bg:       #ffffff;
+            --border:        #d0e9e8;
+            --shadow:        0 4px 20px rgba(60,174,163,0.10);
+            --shadow-lg:     0 8px 40px rgba(60,174,163,0.18);
+            --radius:        14px;
+            --radius-sm:     8px;
+            --transition:    all 0.28s cubic-bezier(.4,0,.2,1);
+            --header-h:      72px;
+        }
+
+        body.dark-mode {
+            --primary:       #4EC9BE;
+            --primary-dark:  #3CAEA3;
+            --primary-light: #1a3535;
+            --accent:        #2ecc71;
+            --accent-light:  #1a2d20;
+            --text:          #e0f0ef;
+            --text-muted:    #8ab8b5;
+            --bg:            #0f1f1f;
+            --card-bg:       #162828;
+            --border:        #1e3d3d;
+            --shadow:        0 4px 20px rgba(0,0,0,0.35);
+            --shadow-lg:     0 8px 40px rgba(0,0,0,0.50);
+        }
+
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            direction: rtl;
+            text-align: right;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            transition: background 0.3s, color 0.3s;
+            padding-top: 72px;
+        }
+        a { color: var(--primary); text-decoration: none; transition: var(--transition); }
+        a:hover { color: var(--primary-dark); }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        button { cursor: pointer; font-family: 'Tajawal', sans-serif; }
+        input, select, textarea { font-family: 'Tajawal', sans-serif; }
+
+        .container {
+            width: 100%;
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 60%, #1a5550 100%);
+            color: #fff;
+            padding: 80px 0 70px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        }
+        .hero .container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        .hero-text { flex: 1; }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .hero-text h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 16px;
+        }
+        .hero-text h1 span { color: #a8f0eb; }
+        .hero-text p { font-size: 1.1rem; opacity: 0.9; max-width: 500px; margin-bottom: 28px; }
+        .hero-stats {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat .val { font-size: 1.8rem; font-weight: 800; }
+        .hero-stat .lbl { font-size: 0.82rem; opacity: 0.8; }
+        .hero-visual {
+            flex: 0 0 320px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero-icon-wrap {
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 7rem;
+            color: rgba(255,255,255,0.85);
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50%      { transform: translateY(-14px); }
+        }
+
+        /* ===== SECTION HEADING ===== */
+        .sec-head {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .sec-head h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+        .sec-head h2 span { color: var(--primary); }
+        .sec-head p { color: var(--text-muted); font-size: 1.05rem; max-width: 580px; margin: 0 auto; }
+        .sec-head .line {
+            width: 60px; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+            margin: 14px auto 0;
+        }
+
+        /* ===== SECTIONS ===== */
+        section.sect { padding: 72px 0; }
+        section.sect.alt-bg { background: var(--primary-light); }
+
+        /* ===== SERVICE CARDS ===== */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 22px;
+        }
+        .svc-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 22px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .svc-card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            transition: width 0.35s ease;
+        }
+        .svc-card:hover::before,
+        .svc-card.selected::before { width: 100%; }
+        .svc-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        .svc-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: var(--shadow-lg);
+        }
+        .svc-icon {
+            width: 56px; height: 56px;
+            background: var(--primary-light);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+        .svc-card:hover .svc-icon,
+        .svc-card.selected .svc-icon {
+            background: var(--primary);
+            color: #fff;
+        }
+        .svc-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .svc-includes { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+        .svc-includes li {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.88rem; color: var(--text-muted);
+        }
+        .svc-includes li::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .svc-select-hint {
+            margin-top: 18px;
+            font-size: 0.82rem;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .svc-card.selected .svc-select-hint { color: var(--accent); }
+
+        /* ===== BOOKING FORM ===== */
+        .booking-wrap {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .booking-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 28px 36px;
+            color: #fff;
+        }
+        .booking-header h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
+        .booking-header p { opacity: 0.85; font-size: 0.95rem; }
+        .booking-body { padding: 36px; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .form-group label .req { color: #e74c3c; margin-right: 2px; }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            outline: none;
+            direction: rtl;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(60,174,163,0.12);
+        }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .field-error {
+            font-size: 0.82rem;
+            color: #e74c3c;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            margin-top: 2px;
+        }
+        .field-error.show { display: flex; }
+        .form-group input.invalid,
+        .form-group select.invalid { border-color: #e74c3c; }
+
+        .submit-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 10px;
+            transition: var(--transition);
+        }
+        .submit-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #1a6b63);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(60,174,163,0.3);
+        }
+        .submit-btn:active { transform: translateY(0); }
+
+        /* ===== SUCCESS SCREEN ===== */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 50px 36px;
+            animation: fadeIn 0.5s ease;
+        }
+        .success-screen.show { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .success-icon {
+            width: 90px; height: 90px;
+            background: var(--accent-light);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin: 0 auto 24px;
+            animation: popIn 0.5s cubic-bezier(.175,.885,.32,1.275);
+        }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        .success-screen h2 { font-size: 1.7rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+        .success-screen .ref-box {
+            display: inline-block;
+            background: var(--primary-light);
+            border: 1.5px dashed var(--primary);
+            border-radius: var(--radius-sm);
+            padding: 10px 28px;
+            margin: 16px 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 2px;
+        }
+        .success-summary {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 28px;
+            margin: 20px auto;
+            max-width: 500px;
+            text-align: right;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 18px;
+        }
+        .success-summary .s-label { font-size: 0.88rem; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+        .success-summary .s-val { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+        .new-booking-btn {
+            margin-top: 28px;
+            padding: 13px 36px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        .new-booking-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        /* ===== STATUS TRACKER ===== */
+        .tracker-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            padding: 36px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+        .tracker-search {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .tracker-search input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            direction: rtl;
+            outline: none;
+            transition: var(--transition);
+        }
+        .tracker-search input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(60,174,163,0.12); }
+        .tracker-search input::placeholder { color: var(--text-muted); }
+        .tracker-search button {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        .tracker-search button:hover { background: var(--primary-dark); }
+
+        .tracker-result { display: none; }
+        .tracker-result.show { display: block; animation: fadeIn 0.4s ease; }
+        .not-found {
+            text-align: center;
+            padding: 28px;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        .not-found i { font-size: 2.5rem; color: var(--border); display: block; margin-bottom: 12px; }
+
+        .appt-card {
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .appt-card-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 18px 24px;
+            color: #fff;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .appt-card-header .ref { font-size: 1.1rem; font-weight: 800; }
+        .appt-card-body { padding: 22px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .appt-field { display: flex; flex-direction: column; gap: 3px; }
+        .appt-field .af-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .appt-field .af-val { font-size: 0.98rem; font-weight: 700; color: var(--text); }
+
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 14px; border-radius: 50px;
+            font-size: 0.85rem; font-weight: 700;
+        }
+        .status-pending  { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d1ecf1; color: #0c5460; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-badge::before {
+            content: '';
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* ===== WHY US CARDS ===== */
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .why-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .why-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); border-color: var(--primary); }
+        .why-icon {
+            width: 68px; height: 68px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.7rem;
+            color: var(--primary);
+            margin: 0 auto 18px;
+            transition: var(--transition);
+        }
+        .why-card:hover .why-icon { background: var(--primary); color: #fff; }
+        .why-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .why-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; }
+
+        /* ===== WHATSAPP FLOAT ===== */
+        .wa-float {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            width: 56px; height: 56px;
+            background: #25d366;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            font-size: 1.6rem;
+            box-shadow: 0 4px 18px rgba(37,211,102,0.45);
+            z-index: 900;
+            transition: var(--transition);
+            animation: waPulse 2.5s ease-in-out infinite;
+        }
+        .wa-float:hover { background: #1ebe5d; color: #fff; transform: scale(1.1); }
+        @keyframes waPulse {
+            0%,100% { box-shadow: 0 4px 18px rgba(37,211,102,0.45); }
+            50%      { box-shadow: 0 4px 28px rgba(37,211,102,0.7); }
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #0d2020;
+            color: #a0c4c2;
+            padding: 56px 0 28px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr 1fr 1fr;
+            gap: 36px;
+            margin-bottom: 44px;
+        }
+        .footer-brand .brand-name {
+            font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 10px;
+        }
+        .footer-brand p { font-size: 0.9rem; line-height: 1.7; max-width: 260px; }
+        .footer-col h4 { color: #fff; font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+        .footer-col a {
+            display: block; color: #8ab8b5; font-size: 0.9rem;
+            margin-bottom: 9px; transition: var(--transition);
+        }
+        .footer-col a:hover { color: var(--primary); }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 22px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 12px;
+            font-size: 0.88rem; color: #6b8f8d;
+        }
+        .eco-badge { display: flex; align-items: center; gap: 6px; color: #4EC9BE; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .hero .container { flex-direction: column; text-align: center; }
+            .hero-visual { display: none; }
+            .hero-stats { justify-content: center; }
+            .why-grid { grid-template-columns: 1fr 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 620px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: 1; }
+            .why-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .booking-body { padding: 22px 18px; }
+            .tracker-box { padding: 22px 18px; }
+            .appt-card-body { grid-template-columns: 1fr; }
+            .tracker-search { flex-direction: column; }
+            .success-summary { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+    <div class="hdr-wrap">
+        <div class="logo-wrap">
+            <a href="index.html">
+                <img src="images/tyar-logo-transparent.png" alt="TYAR">
+            </a>
+        </div>
+        <div class="header-actions">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html" data-en="Home">الرئيسية</a></li>
+                    <li><a href="marketplace.html" data-en="Car Marketplace">سوق السيارات</a></li>
+                    <li><a href="charger.html" data-en="Charger Installation">تركيب الشواحن</a></li>
+                    <li><a href="maintenance.html" class="active" data-en="Maintenance">الصيانة</a></li>
+                    <li><a href="index.html#faq" data-en="FAQ">الأسئلة الشائعة</a></li>
+                </ul>
+            </nav>
+            <button class="dark-toggle" id="darkToggle"><i class="fas fa-moon" id="darkIcon"></i></button>
+            <button class="lang-toggle" id="langBtn">
+                <i class="fas fa-globe"></i>
+                <span data-lang-label>العربية</span>
+            </button>
+            <button class="hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+<nav class="mobile-nav" id="mobileNav">
+    <a href="index.html" data-en="Home">الرئيسية</a>
+    <a href="marketplace.html" data-en="Car Marketplace">سوق السيارات</a>
+    <a href="charger.html" data-en="Charger Installation">تركيب الشواحن</a>
+    <a href="maintenance.html" class="active" data-en="Maintenance">الصيانة</a>
+    <a href="index.html#faq" data-en="FAQ">الأسئلة الشائعة</a>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-text">
+            <div class="hero-badge" data-en='<i class="fas fa-tools"></i> Certified Professional Service'><i class="fas fa-tools"></i> خدمة احترافية معتمدة</div>
+            <h1 data-en='EV <span>Maintenance</span> by Expert Hands'>صيانة <span>السيارات الكهربائية</span> بأيدي خبراء</h1>
+            <p data-en="Book a maintenance appointment in seconds and get a detailed report on your EV's condition from the Kingdom's top specialists.">احجز موعد صيانة في ثوانٍ واحصل على تقرير مفصل بحالة سيارتك الكهربائية من أمهر المتخصصين في المملكة.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="val">+2000</div>
+                    <div class="lbl" data-en="Vehicles Serviced">سيارة تمت صيانتها</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="val">6</div>
+                    <div class="lbl" data-en="Saudi Cities">مدن سعودية</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="val">98%</div>
+                    <div class="lbl" data-en="Customer Satisfaction">رضا العملاء</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-icon-wrap"><i class="fas fa-bolt"></i></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SERVICE TYPES ===== -->
+<section class="sect" id="services">
+    <div class="container">
+        <div class="sec-head">
+            <h2 data-en='Choose <span>Service Type</span>'>اختر <span>نوع الخدمة</span></h2>
+            <p data-en="Click a service to auto-select it in the booking form">انقر على الخدمة لتحديدها تلقائياً في نموذج الحجز</p>
+            <div class="line"></div>
+        </div>
+        <div class="service-grid" id="serviceGrid">
+
+            <div class="svc-card" data-service="battery" tabindex="0" role="button" aria-pressed="false">
+                <div class="svc-icon"><i class="fas fa-battery-full"></i></div>
+                <h3 data-en="Battery Inspection">فحص البطارية</h3>
+                <ul class="svc-includes">
+                    <li data-en="Battery health measurement">قياس صحة البطارية</li>
+                    <li data-en="Cell-level diagnostics">فحص الخلايا الكهربائية</li>
+                    <li data-en="Detailed condition report">تقرير مفصل بالحالة</li>
+                </ul>
+                <div class="svc-select-hint" data-en='<i class="fas fa-hand-pointer"></i> Click to Select'><i class="fas fa-hand-pointer"></i> انقر للتحديد</div>
+            </div>
+
+            <div class="svc-card" data-service="general" tabindex="0" role="button" aria-pressed="false">
+                <div class="svc-icon"><i class="fas fa-wrench"></i></div>
+                <h3 data-en="Routine Maintenance">صيانة دورية</h3>
+                <ul class="svc-includes">
+                    <li data-en="Brake inspection">فحص الفرامل</li>
+                    <li data-en="Air filter replacement">تبديل فلتر الهواء</li>
+                    <li data-en="Tire check">فحص الإطارات</li>
+                    <li data-en="Software update">تحديث البرنامج</li>
+                </ul>
+                <div class="svc-select-hint" data-en='<i class="fas fa-hand-pointer"></i> Click to Select'><i class="fas fa-hand-pointer"></i> انقر للتحديد</div>
+            </div>
+
+            <div class="svc-card" data-service="software" tabindex="0" role="button" aria-pressed="false">
+                <div class="svc-icon"><i class="fas fa-laptop-code"></i></div>
+                <h3 data-en="Software Update">تحديث البرنامج</h3>
+                <ul class="svc-includes">
+                    <li data-en="OS system update">تحديث نظام التشغيل</li>
+                    <li data-en="Sensor calibration">معايرة أجهزة الاستشعار</li>
+                </ul>
+                <div class="svc-select-hint" data-en='<i class="fas fa-hand-pointer"></i> Click to Select'><i class="fas fa-hand-pointer"></i> انقر للتحديد</div>
+            </div>
+
+            <div class="svc-card" data-service="tires" tabindex="0" role="button" aria-pressed="false">
+                <div class="svc-icon"><i class="fas fa-circle"></i></div>
+                <h3 data-en="Tire Inspection">فحص الإطارات</h3>
+                <ul class="svc-includes">
+                    <li data-en="Pressure adjustment">ضبط الضغط</li>
+                    <li data-en="Damage detection">الكشف عن التلف</li>
+                    <li data-en="Balance & alignment">التوازن والمحاذاة</li>
+                </ul>
+                <div class="svc-select-hint" data-en='<i class="fas fa-hand-pointer"></i> Click to Select'><i class="fas fa-hand-pointer"></i> انقر للتحديد</div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ===== BOOKING FORM ===== -->
+<section class="sect alt-bg" id="booking">
+    <div class="container">
+        <div class="sec-head">
+            <h2 data-en='Book <span>Your Appointment</span> Now'>احجز <span>موعدك</span> الآن</h2>
+            <p data-en="Complete the details below and we'll contact you to confirm your appointment">أكمل البيانات أدناه وسنتواصل معك لتأكيد الموعد</p>
+            <div class="line"></div>
+        </div>
+
+        <div class="booking-wrap" id="bookingWrap">
+            <!-- Header bar -->
+            <div class="booking-header">
+                <h2 data-en='<i class="fas fa-calendar-plus" style="margin-left:10px"></i>Maintenance Booking Form'><i class="fas fa-calendar-plus" style="margin-left:10px"></i>نموذج حجز الصيانة</h2>
+                <p data-en='All fields marked with <span style="color:#ffcdd2">*</span> are required'>جميع الحقول المعلّمة بـ <span style="color:#ffcdd2">*</span> مطلوبة</p>
+            </div>
+
+            <!-- Form -->
+            <div class="booking-body" id="bookingFormWrap">
+                <form id="bookingForm" novalidate autocomplete="off">
+                    <div class="form-grid">
+
+                        <!-- Customer Name -->
+                        <div class="form-group">
+                            <label for="custName" data-en='<span class="req">*</span> Customer Name'><span class="req">*</span> اسم العميل</label>
+                            <input type="text" id="custName" placeholder="أدخل اسمك الكامل" data-en-ph="Enter your full name" data-ar-ph="أدخل اسمك الكامل">
+                            <span class="field-error" id="custNameErr" data-en='<i class="fas fa-exclamation-circle"></i> This field is required'><i class="fas fa-exclamation-circle"></i> هذا الحقل مطلوب</span>
+                        </div>
+
+                        <!-- Mobile -->
+                        <div class="form-group">
+                            <label for="custPhone" data-en='<span class="req">*</span> Mobile Number'><span class="req">*</span> رقم الجوال</label>
+                            <input type="tel" id="custPhone" placeholder="05XXXXXXXX" maxlength="10" dir="ltr">
+                            <span class="field-error" id="custPhoneErr" data-en='<i class="fas fa-exclamation-circle"></i> Enter a valid Saudi mobile number starting with 05'><i class="fas fa-exclamation-circle"></i> أدخل رقم جوال سعودي صحيح يبدأ بـ 05</span>
+                        </div>
+
+                        <!-- Service Type -->
+                        <div class="form-group">
+                            <label for="serviceType" data-en='<span class="req">*</span> Service Type'><span class="req">*</span> نوع الخدمة</label>
+                            <select id="serviceType">
+                                <option value="" data-en="-- Select Service Type --">-- اختر نوع الخدمة --</option>
+                                <option value="battery" data-en="Battery Inspection">فحص البطارية</option>
+                                <option value="general" data-en="Routine Maintenance">صيانة دورية</option>
+                                <option value="software" data-en="Software Update">تحديث البرنامج</option>
+                                <option value="tires" data-en="Tire Inspection">فحص الإطارات</option>
+                            </select>
+                            <span class="field-error" id="serviceTypeErr" data-en='<i class="fas fa-exclamation-circle"></i> Please select a service type'><i class="fas fa-exclamation-circle"></i> يرجى اختيار نوع الخدمة</span>
+                        </div>
+
+                        <!-- Car Model -->
+                        <div class="form-group">
+                            <label for="carModel" data-en='<span class="req">*</span> Car Model'><span class="req">*</span> موديل السيارة</label>
+                            <select id="carModel">
+                                <option value="" data-en="-- Select Car Model --">-- اختر موديل السيارة --</option>
+                            </select>
+                            <span class="field-error" id="carModelErr" data-en='<i class="fas fa-exclamation-circle"></i> Please select a car model'><i class="fas fa-exclamation-circle"></i> يرجى اختيار موديل السيارة</span>
+                        </div>
+
+                        <!-- City -->
+                        <div class="form-group">
+                            <label for="city" data-en='<span class="req">*</span> City'><span class="req">*</span> المدينة</label>
+                            <select id="city">
+                                <option value="" data-en="-- Select City --">-- اختر المدينة --</option>
+                                <option value="الرياض" data-en="Riyadh">الرياض</option>
+                                <option value="جدة" data-en="Jeddah">جدة</option>
+                                <option value="الدمام" data-en="Dammam">الدمام</option>
+                                <option value="مكة المكرمة" data-en="Makkah">مكة المكرمة</option>
+                                <option value="المدينة المنورة" data-en="Madinah">المدينة المنورة</option>
+                                <option value="الخبر" data-en="Khobar">الخبر</option>
+                            </select>
+                            <span class="field-error" id="cityErr" data-en='<i class="fas fa-exclamation-circle"></i> Please select a city'><i class="fas fa-exclamation-circle"></i> يرجى اختيار المدينة</span>
+                        </div>
+
+                        <!-- Preferred Date -->
+                        <div class="form-group">
+                            <label for="apptDate" data-en='<span class="req">*</span> Preferred Date'><span class="req">*</span> التاريخ المفضل</label>
+                            <input type="date" id="apptDate" dir="ltr">
+                            <span class="field-error" id="apptDateErr" data-en='<i class="fas fa-exclamation-circle"></i> Choose a future date (Fridays unavailable)'><i class="fas fa-exclamation-circle"></i> اختر تاريخاً مستقبلياً (الجمعة غير متاح)</span>
+                        </div>
+
+                        <!-- Preferred Time -->
+                        <div class="form-group">
+                            <label for="apptTime" data-en='<span class="req">*</span> Preferred Time'><span class="req">*</span> الوقت المفضل</label>
+                            <select id="apptTime">
+                                <option value="" data-en="-- Select Time --">-- اختر الوقت --</option>
+                                <option value="صباحاً 9-12" data-en="Morning (9 AM – 12 PM)">صباحاً (9 - 12)</option>
+                                <option value="ظهراً 12-3" data-en="Midday (12 PM – 3 PM)">ظهراً (12 - 3)</option>
+                                <option value="عصراً 3-6" data-en="Afternoon (3 PM – 6 PM)">عصراً (3 - 6)</option>
+                            </select>
+                            <span class="field-error" id="apptTimeErr" data-en='<i class="fas fa-exclamation-circle"></i> Please select a preferred time'><i class="fas fa-exclamation-circle"></i> يرجى اختيار الوقت المفضل</span>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="form-group full">
+                            <label for="notes" data-en='Additional Notes <span style="color:var(--text-muted);font-weight:400">(optional)</span>'>ملاحظات إضافية <span style="color:var(--text-muted);font-weight:400">(اختياري)</span></label>
+                            <textarea id="notes" placeholder="أي معلومات إضافية تودّ إخبارنا بها عن السيارة أو المشكلة..." data-en-ph="Any additional information about the car or issue..." data-ar-ph="أي معلومات إضافية تودّ إخبارنا بها عن السيارة أو المشكلة..."></textarea>
+                        </div>
+
+                    </div>
+                    <button type="submit" class="submit-btn" data-en='<i class="fas fa-calendar-check"></i> Confirm Booking'>
+                        <i class="fas fa-calendar-check"></i>
+                        تأكيد الحجز
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success Screen -->
+            <div class="success-screen" id="successScreen">
+                <div class="success-icon"><i class="fas fa-check"></i></div>
+                <h2 data-en="Your booking has been confirmed!">تم تأكيد حجزك بنجاح!</h2>
+                <p style="color:var(--text-muted);margin-top:6px" data-en="Your booking reference:">رقم الحجز الخاص بك:</p>
+                <div class="ref-box" id="successRef"></div>
+                <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:16px" data-en="Keep this number to inquire about your appointment">احتفظ بهذا الرقم للاستفسار عن موعدك</p>
+                <div class="success-summary" id="successSummary"></div>
+                <button class="new-booking-btn" id="newBookingBtn" data-en='<i class="fas fa-plus" style="margin-left:6px"></i>New Booking'>
+                    <i class="fas fa-plus" style="margin-left:6px"></i>حجز جديد
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== APPOINTMENT TRACKER ===== -->
+<section class="sect" id="tracker">
+    <div class="container">
+        <div class="sec-head">
+            <h2 data-en='Track <span>Your Appointment</span>'>تتبّع <span>موعدك</span></h2>
+            <p data-en="Enter your booking reference to view your appointment details and status">أدخل رقم الحجز للاطلاع على تفاصيل وحالة موعدك</p>
+            <div class="line"></div>
+        </div>
+        <div class="tracker-box">
+            <div class="tracker-search">
+                <input type="text" id="trackerInput" placeholder="أدخل رقم الحجز — مثال: TY-2026-XXXX" dir="ltr" data-en-ph="Enter booking reference — e.g. TY-2026-XXXX" data-ar-ph="أدخل رقم الحجز — مثال: TY-2026-XXXX">
+                <button id="trackerBtn" data-en='<i class="fas fa-search" style="margin-left:6px"></i>Search'><i class="fas fa-search" style="margin-left:6px"></i>بحث</button>
+            </div>
+            <div class="tracker-result" id="trackerResult"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== WHY US ===== -->
+<section class="sect alt-bg" id="why">
+    <div class="container">
+        <div class="sec-head">
+            <h2 data-en='Why <span>Choose Us?</span>'>لماذا <span>تختارنا؟</span></h2>
+            <p data-en="We provide the best EV maintenance services in the Kingdom">نقدم أفضل خدمات الصيانة للسيارات الكهربائية في المملكة</p>
+            <div class="line"></div>
+        </div>
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-user-tie"></i></div>
+                <h3 data-en="Specialists in Electric Vehicles">خبراء متخصصون في السيارات الكهربائية</h3>
+                <p data-en="Our team is qualified and certified by the world's leading EV companies.">فريقنا مؤهل ومعتمد من أفضل الشركات العالمية في مجال السيارات الكهربائية.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3 data-en="6-Month Warranty on All Work">ضمان 6 أشهر على جميع الأعمال</h3>
+                <p data-en="We guarantee the quality of our work for six full months with immediate follow-up support.">نضمن جودة عملنا لمدة ستة أشهر كاملة مع إمكانية المتابعة والتدخل الفوري.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <h3 data-en="Service in 6 Saudi Cities">خدمة في 6 مدن سعودية</h3>
+                <p data-en="We cover Riyadh, Jeddah, Dammam, Makkah, Madinah, and Khobar.">نغطي الرياض وجدة والدمام ومكة المكرمة والمدينة المنورة والخبر.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="brand-name">طيار</div>
+                <p data-en="Tyar platform for EV services in Saudi Arabia — buy, charge, and maintain.">منصة طيار لخدمات السيارات الكهربائية في المملكة العربية السعودية — بيع، شواحن، وصيانة.</p>
+            </div>
+            <div class="footer-col">
+                <h4 data-en="Our Services">خدماتنا</h4>
+                <a href="marketplace.html" data-en="Car Market">سوق السيارات</a>
+                <a href="charger.html" data-en="Charger Installation">تركيب الشواحن</a>
+                <a href="maintenance.html" data-en="Maintenance">الصيانة</a>
+            </div>
+            <div class="footer-col">
+                <h4 data-en="Company">الشركة</h4>
+                <a href="index.html#about" data-en="About Tyar">عن طيار</a>
+                <a href="index.html#contact" data-en="Contact Us">تواصل معنا</a>
+            </div>
+            <div class="footer-col">
+                <h4 data-en="Legal">قانوني</h4>
+                <a href="#" data-en="Privacy Policy">سياسة الخصوصية</a>
+                <a href="#" data-en="Terms & Conditions">الشروط والأحكام</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span data-en="© 2026 Tyar. All rights reserved.">© 2026 طيار. جميع الحقوق محفوظة.</span>
+            <span class="eco-badge" data-en='<i class="fas fa-leaf"></i> Committed to Environmental Sustainability'><i class="fas fa-leaf"></i> ملتزمون بالاستدامة البيئية</span>
+        </div>
+    </div>
+</footer>
+
+<!-- WhatsApp Float -->
+<a class="wa-float" href="https://wa.me/966500000000" target="_blank" rel="noopener" aria-label="تواصل عبر واتساب">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- ===== DATA ===== -->
+<script src="saudi-data.js"></script>
+<script src="lang.js"></script>
+
+<!-- ===== MAIN SCRIPT ===== -->
+<script>
+(function () {
+    'use strict';
+
+    /* ---------- DARK MODE ---------- */
+    const darkToggle = document.getElementById('darkToggle');
+    const body = document.body;
+
+    function applyDark(on) {
+        body.classList.toggle('dark-mode', on);
+        darkToggle.innerHTML = on ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    }
+    const savedDark = localStorage.getItem('tyar_dark') === 'true';
+    applyDark(savedDark);
+    darkToggle.addEventListener('click', () => {
+        const isDark = !body.classList.contains('dark-mode');
+        applyDark(isDark);
+        localStorage.setItem('tyar_dark', isDark);
+    });
+
+    /* ---------- HAMBURGER ---------- */
+    const ham = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobileNav');
+    ham.addEventListener('click', () => {
+        const open = ham.classList.toggle('open');
+        mobileNav.classList.toggle('open', open);
+    });
+    // close on link click
+    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+        ham.classList.remove('open');
+        mobileNav.classList.remove('open');
+    }));
+
+    /* ---------- POPULATE CAR MODELS ---------- */
+    const carModelSelect = document.getElementById('carModel');
+    if (typeof saudiData !== 'undefined' && saudiData.evModels) {
+        saudiData.evModels.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m.name;
+            opt.textContent = m.name;
+            carModelSelect.appendChild(opt);
+        });
+    }
+
+    /* ---------- SERVICE CARD SELECTION ---------- */
+    const serviceCards = document.querySelectorAll('.svc-card');
+    const serviceTypeSelect = document.getElementById('serviceType');
+
+    serviceCards.forEach(card => {
+        function selectCard() {
+            // deselect all
+            serviceCards.forEach(c => {
+                c.classList.remove('selected');
+                c.setAttribute('aria-pressed', 'false');
+                c.querySelector('.svc-select-hint').innerHTML = '<i class="fas fa-hand-pointer"></i> انقر للتحديد';
+            });
+            // select clicked
+            card.classList.add('selected');
+            card.setAttribute('aria-pressed', 'true');
+            card.querySelector('.svc-select-hint').innerHTML = '<i class="fas fa-check-circle"></i> تم التحديد';
+            // pre-fill form
+            serviceTypeSelect.value = card.dataset.service;
+            clearError('serviceType');
+            // smooth scroll to form
+            setTimeout(() => {
+                document.getElementById('booking').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+        }
+        card.addEventListener('click', selectCard);
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCard(); } });
+    });
+
+    /* ---------- FORM VALIDATION HELPERS ---------- */
+    function showError(fieldId, errId) {
+        const field = document.getElementById(fieldId);
+        const err   = document.getElementById(errId);
+        field.classList.add('invalid');
+        err.classList.add('show');
+        return false;
+    }
+    function clearError(fieldId) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        const errId = fieldId + 'Err';
+        field.classList.remove('invalid');
+        const err = document.getElementById(errId);
+        if (err) err.classList.remove('show');
+    }
+
+    // Clear errors on change
+    ['custName','custPhone','serviceType','carModel','city','apptDate','apptTime'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => clearError(id));
+        if (el) el.addEventListener('change', () => clearError(id));
+    });
+
+    /* ---------- DATE CONSTRAINTS ---------- */
+    const dateInput = document.getElementById('apptDate');
+    const today = new Date();
+    today.setDate(today.getDate() + 1); // earliest is tomorrow
+    dateInput.min = today.toISOString().split('T')[0];
+
+    /* ---------- UNIQUE BOOKING ID ---------- */
+    function genBookingId() {
+        const year = new Date().getFullYear();
+        const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+        return `TY-${year}-${rand}`;
+    }
+
+    /* ---------- SERVICE LABEL MAP ---------- */
+    const svcLabels = {
+        battery:  'فحص البطارية',
+        general:  'صيانة دورية',
+        software: 'تحديث البرنامج',
+        tires:    'فحص الإطارات'
+    };
+
+    /* ---------- FORM SUBMIT ---------- */
+    const form = document.getElementById('bookingForm');
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        let valid = true;
+
+        const name    = document.getElementById('custName').value.trim();
+        const phone   = document.getElementById('custPhone').value.trim();
+        const service = document.getElementById('serviceType').value;
+        const model   = document.getElementById('carModel').value;
+        const city    = document.getElementById('city').value;
+        const date    = document.getElementById('apptDate').value;
+        const time    = document.getElementById('apptTime').value;
+        const notes   = document.getElementById('notes').value.trim();
+
+        // Validate name
+        if (!name) { showError('custName', 'custNameErr'); valid = false; }
+
+        // Validate phone: starts with 05, exactly 10 digits
+        if (!/^05\d{8}$/.test(phone)) { showError('custPhone', 'custPhoneErr'); valid = false; }
+
+        // Validate service
+        if (!service) { showError('serviceType', 'serviceTypeErr'); valid = false; }
+
+        // Validate car model
+        if (!model) { showError('carModel', 'carModelErr'); valid = false; }
+
+        // Validate city
+        if (!city) { showError('city', 'cityErr'); valid = false; }
+
+        // Validate date: must be future, not Friday (5)
+        if (!date) {
+            showError('apptDate', 'apptDateErr'); valid = false;
+        } else {
+            const chosen = new Date(date + 'T00:00:00');
+            const nowDate = new Date(); nowDate.setHours(0,0,0,0);
+            if (chosen <= nowDate || chosen.getDay() === 5) {
+                showError('apptDate', 'apptDateErr'); valid = false;
+            }
+        }
+
+        // Validate time
+        if (!time) { showError('apptTime', 'apptTimeErr'); valid = false; }
+
+        if (!valid) return;
+
+        // Build record
+        const bookingId = genBookingId();
+        const record = {
+            id:         bookingId,
+            name,
+            phone,
+            service,
+            serviceLabel: svcLabels[service] || service,
+            model,
+            city,
+            date,
+            time,
+            notes,
+            status:     'pending',
+            createdAt:  new Date().toISOString()
+        };
+
+        // Persist to localStorage
+        const key = 'tyar_maintenance_requests';
+        const existing = JSON.parse(localStorage.getItem(key) || '[]');
+        existing.push(record);
+        localStorage.setItem(key, JSON.stringify(existing));
+
+        // Show success screen
+        document.getElementById('bookingFormWrap').style.display = 'none';
+        const successScreen = document.getElementById('successScreen');
+        successScreen.classList.add('show');
+        document.getElementById('successRef').textContent = bookingId;
+
+        // Build summary
+        const summary = document.getElementById('successSummary');
+        const rows = [
+            ['الاسم', name],
+            ['نوع الخدمة', record.serviceLabel],
+            ['موديل السيارة', model],
+            ['المدينة', city],
+            ['التاريخ', date],
+            ['الوقت', time]
+        ];
+        summary.innerHTML = rows.map(([l, v]) =>
+            `<span class="s-label">${l}</span><span class="s-val">${v}</span>`
+        ).join('');
+
+        // Also update the tracker input for quick lookup
+        document.getElementById('trackerInput').value = bookingId;
+
+        successScreen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    /* ---------- NEW BOOKING BUTTON ---------- */
+    document.getElementById('newBookingBtn').addEventListener('click', () => {
+        form.reset();
+        serviceCards.forEach(c => {
+            c.classList.remove('selected');
+            c.setAttribute('aria-pressed', 'false');
+            c.querySelector('.svc-select-hint').innerHTML = '<i class="fas fa-hand-pointer"></i> انقر للتحديد';
+        });
+        ['custName','custPhone','serviceType','carModel','city','apptDate','apptTime'].forEach(clearError);
+        document.getElementById('successScreen').classList.remove('show');
+        document.getElementById('bookingFormWrap').style.display = '';
+        document.getElementById('booking').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    /* ---------- APPOINTMENT TRACKER ---------- */
+    const trackerBtn    = document.getElementById('trackerBtn');
+    const trackerInput  = document.getElementById('trackerInput');
+    const trackerResult = document.getElementById('trackerResult');
+
+    function statusLabel(status) {
+        const map = {
+            pending:   ['قيد الانتظار',  'status-pending'],
+            confirmed: ['مؤكد',          'status-confirmed'],
+            completed: ['مكتمل',         'status-completed']
+        };
+        return map[status] || ['غير معروف', 'status-pending'];
+    }
+
+    function lookupBooking() {
+        const ref = trackerInput.value.trim().toUpperCase();
+        trackerResult.classList.remove('show');
+        if (!ref) return;
+
+        const key  = 'tyar_maintenance_requests';
+        const list = JSON.parse(localStorage.getItem(key) || '[]');
+        const rec  = list.find(r => r.id === ref);
+
+        if (!rec) {
+            trackerResult.innerHTML = `
+                <div class="not-found">
+                    <i class="fas fa-search"></i>
+                    لم يتم العثور على الحجز برقم <strong>${ref}</strong>.<br>
+                    تأكد من صحة رقم الحجز وحاول مرة أخرى.
+                </div>`;
+        } else {
+            const [statusText, statusClass] = statusLabel(rec.status);
+            trackerResult.innerHTML = `
+                <div class="appt-card">
+                    <div class="appt-card-header">
+                        <span class="ref"><i class="fas fa-ticket-alt" style="margin-left:8px"></i>${rec.id}</span>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="appt-card-body">
+                        <div class="appt-field">
+                            <span class="af-label">اسم العميل</span>
+                            <span class="af-val">${rec.name}</span>
+                        </div>
+                        <div class="appt-field">
+                            <span class="af-label">نوع الخدمة</span>
+                            <span class="af-val">${rec.serviceLabel || rec.service}</span>
+                        </div>
+                        <div class="appt-field">
+                            <span class="af-label">موديل السيارة</span>
+                            <span class="af-val">${rec.model}</span>
+                        </div>
+                        <div class="appt-field">
+                            <span class="af-label">المدينة</span>
+                            <span class="af-val">${rec.city}</span>
+                        </div>
+                        <div class="appt-field">
+                            <span class="af-label">التاريخ</span>
+                            <span class="af-val">${rec.date}</span>
+                        </div>
+                        <div class="appt-field">
+                            <span class="af-label">الوقت</span>
+                            <span class="af-val">${rec.time}</span>
+                        </div>
+                        ${rec.notes ? `<div class="appt-field" style="grid-column:1/-1">
+                            <span class="af-label">ملاحظات</span>
+                            <span class="af-val">${rec.notes}</span>
+                        </div>` : ''}
+                    </div>
+                </div>`;
+        }
+        trackerResult.classList.add('show');
+    }
+
+    trackerBtn.addEventListener('click', lookupBooking);
+    trackerInput.addEventListener('keydown', e => { if (e.key === 'Enter') lookupBooking(); });
+
+})();
+</script>
+</body>
+</html>

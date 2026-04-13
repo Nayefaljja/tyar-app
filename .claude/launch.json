@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tyar-static",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "3800", "--directory", "tyar-app"],
+      "port": 3800
+    }
+  ]
+}
