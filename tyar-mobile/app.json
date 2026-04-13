@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "TYAR | تيار",
-    "slug": "tyar-mobile",
+    "slug": "tyar-ev",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -14,17 +14,30 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.tyar.app"
+      "bundleIdentifier": "com.tyar.ev",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#0f2744"
       },
-      "package": "com.tyar.app"
+      "package": "com.tyar.ev",
+      "versionCode": 1,
+      "permissions": ["INTERNET", "VIBRATE"]
     },
     "web": {
-      "favicon": "./assets/logo.png"
+      "favicon": "./assets/logo.png",
+      "bundler": "metro"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "plugins": ["expo-font"],
+    "extra": {
+      "eas": {
+        "projectId": "tyar-ev"
+      }
     }
   }
 }
