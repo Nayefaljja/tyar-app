@@ -48,4 +48,15 @@ async function submitMaintenanceBooking(payload) {
   return data;
 }
 
-window.tyarDB = { fetchCars, submitChargerBooking, submitMaintenanceBooking };
+// ── Car listing submission ───────────────────────────────────────────────────
+async function submitCarListing(payload) {
+  const { data, error } = await db()
+    .from('car_listings')
+    .insert([payload])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+window.tyarDB = { fetchCars, submitChargerBooking, submitMaintenanceBooking, submitCarListing };

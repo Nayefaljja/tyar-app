@@ -273,7 +273,7 @@ export default function MaintenanceScreen() {
 
             {/* Calendar placeholder */}
             <TouchableOpacity
-              style={[s.calendarBtn, { borderColor: colors.primary }]}
+              style={[s.calendarBtn, { borderColor: colors.primary, flexDirection: isRTL ? 'row-reverse' : 'row' }]}
               onPress={() => { haptic('Light'); showToast(isRTL ? 'قريباً!' : 'Coming soon', 'success'); }}
               activeOpacity={0.8}
             >
@@ -284,7 +284,7 @@ export default function MaintenanceScreen() {
             </TouchableOpacity>
 
             {/* New Booking */}
-            <TouchableOpacity style={[s.resetBtn, { backgroundColor: colors.primary }]} onPress={resetForm} activeOpacity={0.85}>
+            <TouchableOpacity style={[s.resetBtn, { backgroundColor: colors.primary, flexDirection: isRTL ? 'row-reverse' : 'row' }]} onPress={resetForm} activeOpacity={0.85}>
               <Ionicons name="add-circle-outline" size={18} color="#fff" />
               <Text style={s.resetBtnText}>{isRTL ? 'حجز جديد' : 'New Booking'}</Text>
             </TouchableOpacity>
@@ -738,7 +738,7 @@ const styles = (c, isRTL, isDark) => StyleSheet.create({
     justifyContent: 'center',
   },
   summaryLabel: { fontSize: 13 },
-  summaryValue: { fontSize: 13, fontWeight: '700', maxWidth: '55%', textAlign: 'right' },
+  summaryValue: { fontSize: 13, fontWeight: '700', maxWidth: '55%', textAlign: 'auto' },
   calendarBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -893,7 +893,7 @@ const styles = (c, isRTL, isDark) => StyleSheet.create({
   input:       { flex: 1, fontSize: 14, paddingVertical: 12 },
   textarea:    { height: 90, paddingVertical: 0, textAlignVertical: 'top' },
   charCount:   { fontSize: 11, color: c.textMuted, marginTop: 5 },
-  errorText:   { fontSize: 12, color: '#ef4444', marginTop: 5, marginLeft: 2 },
+  errorText:   { fontSize: 12, color: '#ef4444', marginTop: 5 },
 
   // Time chips
   chipRow: { flexWrap: 'wrap', gap: 8 },

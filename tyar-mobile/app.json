@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/logo.png",
       "resizeMode": "contain",
@@ -24,7 +24,10 @@
       },
       "package": "com.tyar.ev",
       "versionCode": 1,
-      "permissions": ["INTERNET", "VIBRATE"]
+      "permissions": [
+        "INTERNET",
+        "VIBRATE"
+      ]
     },
     "web": {
       "favicon": "./assets/logo.png",
@@ -33,10 +36,14 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "plugins": ["expo-font"],
+    "plugins": [
+      "expo-font"
+    ],
     "extra": {
+      "supabaseUrl": "https://gfqafbubvdrpjgimtert.supabase.co",
+      "supabaseAnon": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
       "eas": {
-        "projectId": "tyar-ev"
+        "projectId": "aa15a6b6-4a4d-4f37-a131-0f858d5ae284"
       }
     }
   }

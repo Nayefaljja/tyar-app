@@ -188,10 +188,10 @@ function PriceCard({ type, isRTL, colors }) {
         <View style={priceStyle.deco} />
         <View style={[priceStyle.inner, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
           <View style={{ flex: 1 }}>
-            <Text style={priceStyle.label}>
+            <Text style={[priceStyle.label, { textAlign: isRTL ? 'right' : 'left' }]}>
               {isRTL ? 'السعر التقديري' : 'Estimated Price'}
             </Text>
-            <Text style={priceStyle.price}>
+            <Text style={[priceStyle.price, { textAlign: isRTL ? 'right' : 'left' }]}>
               {isRTL ? type.priceAr : type.priceEn}
             </Text>
             <View style={[priceStyle.badge, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
@@ -286,7 +286,7 @@ function SuccessScreen({ selectedType, cityIdx, isRTL, colors, onReset, topInset
             { backgroundColor: colors.surface, borderColor: colors.border },
           ]}
         >
-          <Text style={[successSt.summaryTitle, { color: colors.text }]}>
+          <Text style={[successSt.summaryTitle, { color: colors.text, textAlign: isRTL ? 'right' : 'left' }]}>
             {isRTL ? 'ملخص الطلب' : 'Order Summary'}
           </Text>
 
@@ -295,6 +295,7 @@ function SuccessScreen({ selectedType, cityIdx, isRTL, colors, onReset, topInset
             value={isRTL ? selectedType.ar : selectedType.en}
             colors={colors}
             icon="flash"
+            isRTL={isRTL}
           />
           <SummaryRow
             label={isRTL ? 'القوة' : 'Power'}
@@ -302,12 +303,14 @@ function SuccessScreen({ selectedType, cityIdx, isRTL, colors, onReset, topInset
             colors={colors}
             icon="speedometer"
             valueTeal
+            isRTL={isRTL}
           />
           <SummaryRow
             label={isRTL ? 'المدينة' : 'City'}
             value={cityLabel ?? '—'}
             colors={colors}
             icon="location"
+            isRTL={isRTL}
           />
           <SummaryRow
             label={isRTL ? 'السعر التقديري' : 'Est. Price'}
@@ -315,6 +318,7 @@ function SuccessScreen({ selectedType, cityIdx, isRTL, colors, onReset, topInset
             colors={colors}
             icon="pricetag"
             valueTeal
+            isRTL={isRTL}
           />
         </View>
 
@@ -322,11 +326,11 @@ function SuccessScreen({ selectedType, cityIdx, isRTL, colors, onReset, topInset
         <View
           style={[
             successSt.noteCard,
-            { backgroundColor: colors.primary + '15', borderColor: colors.primary + '40' },
+            { backgroundColor: colors.primary + '15', borderColor: colors.primary + '40', flexDirection: isRTL ? 'row-reverse' : 'row' },
           ]}
         >
           <Ionicons name="information-circle" size={18} color={colors.primary} />
-          <Text style={[successSt.noteText, { color: colors.textSoft }]}>
+          <Text style={[successSt.noteText, { color: colors.textSoft, textAlign: isRTL ? 'right' : 'left' }]}>
             {isRTL
               ? 'سيتم التواصل معك عبر رقم الجوال المسجل لتأكيد الموعد'
               : 'We will reach you via your registered phone number to confirm the appointment'}
@@ -334,7 +338,7 @@ function SuccessScreen({ selectedType, cityIdx, isRTL, colors, onReset, topInset
         </View>
 
         <TouchableOpacity
-          style={[successSt.resetBtn, { backgroundColor: colors.primary }]}
+          style={[successSt.resetBtn, { backgroundColor: colors.primary, flexDirection: isRTL ? 'row-reverse' : 'row' }]}
           activeOpacity={0.85}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -351,17 +355,17 @@ function SuccessScreen({ selectedType, cityIdx, isRTL, colors, onReset, topInset
   );
 }
 
-function SummaryRow({ label, value, colors, icon, valueTeal }) {
+function SummaryRow({ label, value, colors, icon, valueTeal, isRTL }) {
   return (
-    <View style={successSt.row}>
+    <View style={[successSt.row, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
       <View style={[successSt.rowIcon, { backgroundColor: colors.primary + '15' }]}>
         <Ionicons name={icon} size={13} color={colors.primary} />
       </View>
-      <Text style={[successSt.rowLabel, { color: colors.textMuted }]}>{label}</Text>
+      <Text style={[successSt.rowLabel, { color: colors.textMuted, textAlign: isRTL ? 'right' : 'left' }]}>{label}</Text>
       <Text
         style={[
           successSt.rowValue,
-          { color: valueTeal ? colors.primary : colors.text },
+          { color: valueTeal ? colors.primary : colors.text, textAlign: isRTL ? 'left' : 'right' },
         ]}
       >
         {value}

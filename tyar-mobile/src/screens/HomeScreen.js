@@ -583,6 +583,7 @@ export default function HomeScreen() {
             shadowOpacity: headerShadow,
             borderBottomWidth: headerBorder,
             borderBottomColor: colors.border,
+            flexDirection: isRTL ? 'row-reverse' : 'row',
           },
         ]}
       >

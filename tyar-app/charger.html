@@ -1312,7 +1312,7 @@ function validateForm() {
 // ============================================================
 //  FORM SUBMIT → SAVE TO LOCALSTORAGE
 // ============================================================
-document.getElementById('chargerForm').addEventListener('submit', function(e) {
+document.getElementById('chargerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -1320,38 +1320,49 @@ document.getElementById('chargerForm').addEventListener('submit', function(e) {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
 
-    setTimeout(() => {
-        const ts  = Date.now();
-        const ref = 'TYR-' + ts;
+    const ts  = Date.now();
+    const ref = 'TYR-' + ts;
 
-        const request = {
-            id:          ref,
-            timestamp:   ts,
-            status:      'pending',
-            fullName:    document.getElementById('fullName').value.trim(),
-            phone:       document.getElementById('phone').value.trim(),
-            email:       document.getElementById('email').value.trim(),
-            city:        document.getElementById('city').value,
-            address:     document.getElementById('address').value.trim(),
-            chargerType: document.querySelector('input[name="chargerType"]:checked').value,
-            prefDate:    document.getElementById('prefDate').value,
-            notes:       document.getElementById('notes').value.trim()
+    const payload = {
+        full_name:    document.getElementById('fullName').value.trim(),
+        phone:        document.getElementById('phone').value.trim(),
+        email:        document.getElementById('email').value.trim(),
+        city:         document.getElementById('city').value,
+        address:      document.getElementById('address').value.trim(),
+        charger_type: document.querySelector('input[name="chargerType"]:checked').value,
+        pref_date:    document.getElementById('prefDate').value,
+        notes:        document.getElementById('notes').value.trim(),
+        status:       'pending'
+    };
+
+    let displayRef = ref;
+
+    try {
+        // Submit to Supabase
+        const result = await window.tyarDB.submitChargerBooking(payload);
+        displayRef = result.id ? 'TYR-' + result.id : ref;
+    } catch (err) {
+        console.error('[TYAR] Supabase charger booking failed:', err.message);
+        // Fallback: save to localStorage so data is not lost
+        const local = {
+            id: ref,
+            timestamp: ts,
+            status: 'pending',
+            ...payload
         };
-
-        // Save to localStorage
         const existing = JSON.parse(localStorage.getItem('tyar_charger_requests') || '[]');
-        existing.push(request);
+        existing.push(local);
         localStorage.setItem('tyar_charger_requests', JSON.stringify(existing));
+    }
 
-        // Show success card
-        document.getElementById('formWrapper').style.display = 'none';
-        document.getElementById('refBadge').textContent = 'رقم الطلب: #' + ref;
-        document.getElementById('successCard').classList.add('show');
-        document.getElementById('successCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Show success card
+    document.getElementById('formWrapper').style.display = 'none';
+    document.getElementById('refBadge').textContent = 'رقم الطلب: #' + displayRef;
+    document.getElementById('successCard').classList.add('show');
+    document.getElementById('successCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الطلب';
-    }, 900);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الطلب';
 });
 
 function resetForm() {

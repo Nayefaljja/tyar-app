@@ -50,7 +50,7 @@ function batteryColor(pct) {
 }
 
 // ─── Animated chip ────────────────────────────────────────────────────────────
-function FilterChip({ label, active, onPress }) {
+function FilterChip({ label, active, onPress, colors }) {
   const scale = useRef(new Animated.Value(1)).current;
   const press = () => {
     Animated.sequence([
@@ -67,19 +67,20 @@ function FilterChip({ label, active, onPress }) {
         activeOpacity={0.85}
         style={[
           chipStyle.chip,
-          active && chipStyle.chipActive,
+          {
+            borderColor: active ? colors.primary : colors.border,
+            backgroundColor: active ? colors.primary : colors.surface,
+          },
         ]}
       >
-        <Text style={[chipStyle.text, active && chipStyle.textActive]}>{label}</Text>
+        <Text style={[chipStyle.text, { color: active ? '#fff' : colors.textMuted }]}>{label}</Text>
       </TouchableOpacity>
     </Animated.View>
   );
 }
 const chipStyle = StyleSheet.create({
-  chip:       { borderWidth: 1.5, borderColor: '#d1e8e5', borderRadius: 50, paddingHorizontal: 18, paddingVertical: 8, backgroundColor: '#fff' },
-  chipActive: { backgroundColor: '#3CAEA3', borderColor: '#3CAEA3' },
-  text:       { fontSize: 13, fontWeight: '600', color: '#7a94b0' },
-  textActive: { color: '#fff' },
+  chip: { borderWidth: 1.5, borderRadius: 50, paddingHorizontal: 18, paddingVertical: 8 },
+  text: { fontSize: 13, fontWeight: '600' },
 });
 
 // ─── Heart button with animated scale ─────────────────────────────────────────
@@ -219,7 +220,7 @@ const card = StyleSheet.create({
   battRow:     { alignItems: 'center', gap: 7, marginBottom: 11 },
   battTrack:   { flex: 1, height: 5, backgroundColor: 'rgba(0,0,0,0.08)', borderRadius: 3, overflow: 'hidden' },
   battFill:    { height: 5, borderRadius: 3 },
-  battPct:     { fontSize: 11, fontWeight: '700', width: 34, textAlign: 'right' },
+  battPct:     { fontSize: 11, fontWeight: '700', width: 34, textAlign: 'auto' },
   metaRow:     { gap: 6, alignItems: 'center', marginBottom: 13 },
   metaItem:    { flexDirection: 'row', alignItems: 'center', gap: 4 },
   metaTxt:     { fontSize: 12 },
@@ -417,6 +418,7 @@ export default function MarketplaceScreen() {
             label={isRTL ? f.ar : f.en}
             active={filter === f.key}
             onPress={() => setFilter(f.key)}
+            colors={colors}
           />
         ))}
       </ScrollView>

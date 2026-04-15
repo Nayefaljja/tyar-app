@@ -372,7 +372,7 @@ const img = StyleSheet.create({
   badge:    { backgroundColor: '#3CAEA3', borderRadius: 50, paddingHorizontal: 14, paddingVertical: 5, marginTop: 8 },
   badgeText:{ fontSize: 12, color: '#fff', fontWeight: '700' },
   battWrap: { alignItems: 'center', gap: 8, marginTop: 16, width: width * 0.7 },
-  battTxt:  { fontSize: 13, fontWeight: '700', width: 36, textAlign: 'right' },
+  battTxt:  { fontSize: 13, fontWeight: '700', width: 36, textAlign: 'auto' },
 });
 
 const price = StyleSheet.create({
@@ -399,7 +399,7 @@ const grid = StyleSheet.create({
   wrap:    { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   cell:    { width: (width - 52) / 2, borderRadius: 14, borderWidth: 1, padding: 14, gap: 8 },
   iconBox: { width: 38, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  label:   { fontSize: 11, color: '#7a94b0' },
+  label:   { fontSize: 11 },
   value:   { fontSize: 14, fontWeight: '700' },
 });
 

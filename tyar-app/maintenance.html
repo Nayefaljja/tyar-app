@@ -1044,7 +1044,7 @@
 
     /* ---------- FORM SUBMIT ---------- */
     const form = document.getElementById('bookingForm');
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
         let valid = true;
 
@@ -1105,17 +1105,44 @@
             createdAt:  new Date().toISOString()
         };
 
-        // Persist to localStorage
-        const key = 'tyar_maintenance_requests';
-        const existing = JSON.parse(localStorage.getItem(key) || '[]');
-        existing.push(record);
-        localStorage.setItem(key, JSON.stringify(existing));
+        // Disable submit button while sending
+        const submitBtn = form.querySelector('[type="submit"]');
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...'; }
+
+        const payload = {
+            full_name:    name,
+            phone:        phone,
+            service_type: service,
+            car_model:    model,
+            city:         city,
+            appt_date:    date,
+            appt_time:    time,
+            notes:        notes,
+            status:       'pending'
+        };
+
+        let displayRef = bookingId;
+
+        try {
+            // Submit to Supabase
+            const result = await window.tyarDB.submitMaintenanceBooking(payload);
+            if (result && result.id) displayRef = 'TY-' + result.id;
+        } catch (err) {
+            console.error('[TYAR] Supabase maintenance booking failed:', err.message);
+            // Fallback: save to localStorage so data is not lost
+            const key = 'tyar_maintenance_requests';
+            const existing = JSON.parse(localStorage.getItem(key) || '[]');
+            existing.push(record);
+            localStorage.setItem(key, JSON.stringify(existing));
+        }
+
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> تأكيد الحجز'; }
 
         // Show success screen
         document.getElementById('bookingFormWrap').style.display = 'none';
         const successScreen = document.getElementById('successScreen');
         successScreen.classList.add('show');
-        document.getElementById('successRef').textContent = bookingId;
+        document.getElementById('successRef').textContent = displayRef;
 
         // Build summary
         const summary = document.getElementById('successSummary');

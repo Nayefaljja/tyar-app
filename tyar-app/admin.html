@@ -1,457 +1,374 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تيار — لوحة تحكم الإعلانات</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #3CAEA3;
-            --primary-d: #2a9d8f;
-            --navy: #0f2744;
-            --bg: #f0f7f6;
-            --surface: #ffffff;
-            --surface2: #f8fafc;
-            --text: #0f2744;
-            --text-soft: #4a6280;
-            --text-muted: #7a94b0;
-            --border: #d1e8e5;
-            --green: #22c55e;
-            --red: #ef4444;
-            --yellow: #f59e0b;
-            --shadow-sm: 0 2px 8px rgba(15,39,68,.07);
-            --shadow-md: 0 6px 24px rgba(15,39,68,.11);
-            --r: 14px;
-        }
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-        a { text-decoration:none; color:inherit; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TYAR Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #3CAEA3; --navy: #0f2744; --navy2: #162f52;
+      --gold: #F4A923; --danger: #e05252;
+      --bg: #0b1e36; --card: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.1); --text: #e8f0fe; --sub: #8aa4c8;
+      --radius: 12px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-        /* ── Header ── */
-        header {
-            background:var(--navy);
-            padding: 0 5%;
-            display:flex; align-items:center; justify-content:space-between;
-            height:62px;
-            position:sticky; top:0; z-index:100;
-        }
-        .hdr-logo { height:38px; }
-        .hdr-title { color:#fff; font-size:1rem; font-weight:700; display:flex; align-items:center; gap:8px; }
-        .hdr-title i { color:var(--primary); }
-        .hdr-back {
-            display:flex; align-items:center; gap:6px;
-            color:rgba(255,255,255,.7); font-size:0.85rem;
-            transition:color .2s;
-        }
-        .hdr-back:hover { color:#fff; }
+    /* ── Login ── */
+    #login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+    .login-card { background: var(--navy2); border: 1px solid var(--border); border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 400px; text-align: center; }
+    .login-logo { font-size: 32px; font-weight: 800; color: var(--primary); letter-spacing: -1px; margin-bottom: 4px; }
+    .login-sub { color: var(--sub); font-size: 14px; margin-bottom: 36px; }
+    .field { margin-bottom: 16px; text-align: left; }
+    .field label { display: block; font-size: 13px; color: var(--sub); margin-bottom: 6px; }
+    .field input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 14px; font-family: inherit; transition: border-color .2s; }
+    .field input:focus { outline: none; border-color: var(--primary); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: opacity .2s, transform .1s; font-family: inherit; }
+    .btn:hover { opacity: .85; } .btn:active { transform: scale(.97); } .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-danger  { background: var(--danger);  color: #fff; }
+    .btn-gold    { background: var(--gold);    color: #000; }
+    .btn-ghost   { background: rgba(255,255,255,.08); color: var(--text); }
+    .btn-full    { width: 100%; justify-content: center; }
+    .error-msg { background: rgba(224,82,82,.15); border: 1px solid rgba(224,82,82,.4); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #f79090; margin-top: 12px; display: none; }
+    .error-msg.show { display: block; }
 
-        /* ── Main ── */
-        .main { max-width:1200px; margin:0 auto; padding:32px 5% 60px; }
+    /* ── Dashboard ── */
+    #dashboard { display: none; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; background: var(--navy2); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .topbar-brand { font-size: 20px; font-weight: 800; color: var(--primary); }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .topbar-email { font-size: 13px; color: var(--sub); }
+    .tabs-bar { display: flex; gap: 4px; padding: 16px 28px 0; border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .tab-btn { padding: 10px 20px; border-radius: 8px 8px 0 0; border: none; background: transparent; color: var(--sub); font-size: 14px; font-weight: 500; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; font-family: inherit; }
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,.04); }
+    .tab-btn.active { color: var(--primary); background: rgba(60,174,163,.1); border-bottom: 2px solid var(--primary); }
+    .badge { background: var(--gold); color: #000; border-radius: 10px; padding: 1px 7px; font-size: 11px; font-weight: 700; }
+    .tab-panel { display: none; padding: 28px; }
+    .tab-panel.active { display: block; }
 
-        /* ── Stats row ── */
-        .stats-row {
-            display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
-            margin-bottom:32px;
-        }
-        .stat-box {
-            background:var(--surface); border-radius:var(--r);
-            padding:20px 22px; border:1px solid var(--border);
-            box-shadow:var(--shadow-sm);
-            display:flex; align-items:center; gap:16px;
-        }
-        .stat-icon {
-            width:46px; height:46px; border-radius:12px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.3rem; flex-shrink:0;
-        }
-        .si-all     { background:rgba(60,174,163,.1); color:var(--primary); }
-        .si-pending { background:rgba(245,158,11,.1);  color:var(--yellow); }
-        .si-approved{ background:rgba(34,197,94,.1);   color:var(--green); }
-        .si-rejected{ background:rgba(239,68,68,.1);   color:var(--red); }
-        .stat-info { line-height:1.3; }
-        .stat-num  { font-size:1.8rem; font-weight:800; }
-        .stat-lbl  { font-size:0.8rem; color:var(--text-soft); }
+    /* Filter */
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-btn { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--sub); font-size: 13px; cursor: pointer; transition: all .2s; font-family: inherit; }
+    .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .filter-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
-        /* ── Filter tabs ── */
-        .filter-tabs {
-            display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap;
-        }
-        .tab {
-            padding:8px 20px; border-radius:50px;
-            border:1.5px solid var(--border);
-            background:var(--surface); cursor:pointer;
-            font-family:'Tajawal',sans-serif; font-size:0.88rem; font-weight:600;
-            color:var(--text-soft); transition:all .2s; display:flex; align-items:center; gap:6px;
-        }
-        .tab:hover { border-color:var(--primary); color:var(--primary); }
-        .tab.active { background:var(--primary); border-color:var(--primary); color:#fff; }
-        .tab .badge {
-            background:rgba(255,255,255,.25); color:inherit;
-            min-width:20px; height:20px; border-radius:50px;
-            font-size:0.72rem; padding:0 6px;
-            display:inline-flex; align-items:center; justify-content:center;
-        }
-        .tab:not(.active) .badge { background:var(--border); color:var(--text-muted); }
+    /* Cards */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+    .car-title { font-size: 18px; font-weight: 700; }
+    .car-price { font-size: 18px; font-weight: 700; color: var(--primary); }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-bottom: 14px; }
+    .meta-item { font-size: 13px; color: var(--sub); }
+    .meta-item strong { color: var(--text); display: block; font-size: 14px; }
+    .seller-block { background: rgba(255,255,255,.04); border-radius: 8px; padding: 12px; margin-bottom: 14px; display: flex; gap: 24px; flex-wrap: wrap; }
+    .seller-block span { font-size: 13px; color: var(--sub); }
+    .seller-block strong { color: var(--text); }
+    .desc-text { font-size: 13px; color: var(--sub); margin-bottom: 14px; line-height: 1.5; }
+    .card-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .note-input { flex: 1; min-width: 200px; background: rgba(255,255,255,.06); border: 1px solid var(--border); border-radius: 6px; padding: 7px 12px; color: var(--text); font-size: 13px; font-family: inherit; }
+    .note-input:focus { outline: none; border-color: var(--primary); }
 
-        /* ── Empty state ── */
-        .empty-state {
-            text-align:center; padding:80px 20px;
-            color:var(--text-muted);
-        }
-        .empty-state i { font-size:3rem; margin-bottom:16px; opacity:.4; display:block; }
-        .empty-state p { font-size:1rem; }
+    /* Status */
+    .status-badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .status-pending   { background: rgba(244,169,35,.2);  color: var(--gold);    border: 1px solid rgba(244,169,35,.4); }
+    .status-approved  { background: rgba(60,174,163,.2);  color: var(--primary); border: 1px solid rgba(60,174,163,.4); }
+    .status-rejected  { background: rgba(224,82,82,.2);   color: var(--danger);  border: 1px solid rgba(224,82,82,.4); }
+    .status-contacted { background: rgba(100,149,237,.2); color: #849fef; border: 1px solid rgba(100,149,237,.3); }
+    .status-scheduled { background: rgba(147,112,219,.2); color: #b39ddb; border: 1px solid rgba(147,112,219,.3); }
+    .status-completed { background: rgba(60,174,163,.2);  color: var(--primary); border: 1px solid rgba(60,174,163,.4); }
+    .status-cancelled { background: rgba(224,82,82,.2);   color: var(--danger);  border: 1px solid rgba(224,82,82,.4); }
 
-        /* ── Listing cards ── */
-        .listings-grid {
-            display:grid; grid-template-columns:repeat(auto-fill, minmax(360px,1fr));
-            gap:20px;
-        }
+    /* Booking */
+    .booking-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    .booking-info { flex: 1; min-width: 200px; }
+    .booking-name { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .booking-meta { font-size: 13px; color: var(--sub); line-height: 1.8; }
+    .booking-meta strong { color: var(--text); }
+    .booking-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+    .status-select { background: rgba(255,255,255,.08); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; color: var(--text); font-size: 13px; font-family: inherit; cursor: pointer; }
+    .status-select:focus { outline: none; border-color: var(--primary); }
 
-        .admin-card {
-            background:var(--surface); border-radius:var(--r);
-            border:1px solid var(--border); box-shadow:var(--shadow-sm);
-            overflow:hidden; transition:box-shadow .2s;
-        }
-        .admin-card:hover { box-shadow:var(--shadow-md); }
-        .admin-card.status-approved { border-color:rgba(34,197,94,.4); }
-        .admin-card.status-rejected { border-color:rgba(239,68,68,.3); opacity:.7; }
+    /* Loading */
+    .loading { text-align: center; padding: 60px 20px; color: var(--sub); }
+    .spinner { width: 36px; height: 36px; border: 3px solid rgba(60,174,163,.2); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty { text-align: center; padding: 60px 20px; color: var(--sub); font-size: 15px; }
+    .date-small { font-size: 12px; color: var(--sub); }
 
-        .card-img {
-            position:relative; height:200px; overflow:hidden;
-            background:#e2e8f0;
-        }
-        .card-img img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
-        .admin-card:hover .card-img img { transform:scale(1.04); }
-
-        .card-status-badge {
-            position:absolute; top:12px; right:12px;
-            padding:4px 12px; border-radius:50px;
-            font-size:0.75rem; font-weight:700;
-        }
-        .badge-pending  { background:var(--yellow); color:#fff; }
-        .badge-approved { background:var(--green);  color:#fff; }
-        .badge-rejected { background:var(--red);    color:#fff; }
-
-        .card-time {
-            position:absolute; bottom:10px; left:10px;
-            background:rgba(0,0,0,.55); color:#fff;
-            font-size:0.7rem; padding:3px 8px; border-radius:6px;
-        }
-
-        .card-body { padding:16px 18px; }
-
-        .card-header {
-            display:flex; justify-content:space-between; align-items:flex-start;
-            margin-bottom:12px;
-        }
-        .card-model { font-size:1.05rem; font-weight:800; }
-        .card-year  { font-size:0.8rem; color:var(--text-muted); margin-top:2px; }
-        .card-price { font-size:1.1rem; font-weight:800; color:var(--primary); white-space:nowrap; }
-
-        .card-specs {
-            display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;
-        }
-        .spec {
-            display:flex; align-items:center; gap:5px;
-            background:var(--surface2); border:1px solid var(--border);
-            border-radius:8px; padding:4px 10px;
-            font-size:0.78rem; color:var(--text-soft);
-        }
-        .spec i { color:var(--primary); font-size:0.72rem; }
-
-        .battery-row { margin-bottom:12px; }
-        .battery-label { display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-bottom:4px; }
-        .battery-bar { height:5px; background:var(--border); border-radius:3px; overflow:hidden; }
-        .battery-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#22c55e,#4ade80); }
-
-        .card-desc {
-            font-size:0.83rem; color:var(--text-soft); line-height:1.65;
-            margin-bottom:14px; border-top:1px solid var(--border); padding-top:12px;
-        }
-
-        .card-contact {
-            font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;
-            display:flex; align-items:center; gap:6px;
-        }
-        .card-contact i { color:var(--primary); }
-
-        .card-actions { display:flex; gap:8px; }
-
-        .btn-approve, .btn-reject, .btn-undo {
-            flex:1; padding:10px 0;
-            border:none; border-radius:10px;
-            font-family:'Tajawal',sans-serif; font-size:0.9rem; font-weight:700;
-            cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
-            transition:all .2s;
-        }
-        .btn-approve {
-            background:linear-gradient(135deg,#22c55e,#16a34a);
-            color:#fff;
-        }
-        .btn-approve:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(34,197,94,.35); }
-        .btn-reject {
-            background:var(--surface2); border:1.5px solid var(--border);
-            color:var(--red);
-        }
-        .btn-reject:hover { background:#fef2f2; border-color:var(--red); transform:translateY(-2px); }
-        .btn-undo {
-            background:var(--surface2); border:1.5px solid var(--border);
-            color:var(--text-soft);
-        }
-        .btn-undo:hover { border-color:var(--primary); color:var(--primary); }
-
-        /* ── Toast ── */
-        .toast {
-            position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
-            background:var(--navy); color:#fff;
-            padding:12px 24px; border-radius:50px;
-            font-size:0.9rem; font-weight:600;
-            opacity:0; transition:all .3s; z-index:999; pointer-events:none;
-            display:flex; align-items:center; gap:8px;
-        }
-        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-        .toast.toast-green { background:#16a34a; }
-        .toast.toast-red   { background:#dc2626; }
-
-        /* ── Responsive ── */
-        @media(max-width:768px) {
-            .stats-row { grid-template-columns:repeat(2,1fr); }
-            .listings-grid { grid-template-columns:1fr; }
-        }
-        @media(max-width:480px) {
-            .stats-row { grid-template-columns:1fr 1fr; }
-        }
-    </style>
+    @media (max-width: 600px) {
+      .topbar, .tabs-bar, .tab-panel { padding-left: 16px; padding-right: 16px; }
+      .login-card { padding: 32px 24px; }
+    }
+  </style>
 </head>
 <body>
 
-<header>
-    <img src="images/tyar-logo-transparent.png" alt="تيار" class="hdr-logo">
-    <div class="hdr-title"><i class="fas fa-shield-alt"></i> لوحة تحكم الإعلانات</div>
-    <a href="marketplace.html" class="hdr-back"><i class="fas fa-arrow-left"></i> العودة للسوق</a>
-</header>
-
-<div class="main">
-
-    <!-- Stats -->
-    <div class="stats-row" id="statsRow">
-        <div class="stat-box">
-            <div class="stat-icon si-all"><i class="fas fa-list"></i></div>
-            <div class="stat-info">
-                <div class="stat-num" id="cnt-all">0</div>
-                <div class="stat-lbl">إجمالي الإعلانات</div>
-            </div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-icon si-pending"><i class="fas fa-clock"></i></div>
-            <div class="stat-info">
-                <div class="stat-num" id="cnt-pending">0</div>
-                <div class="stat-lbl">بانتظار المراجعة</div>
-            </div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-icon si-approved"><i class="fas fa-check-circle"></i></div>
-            <div class="stat-info">
-                <div class="stat-num" id="cnt-approved">0</div>
-                <div class="stat-lbl">تم نشرها</div>
-            </div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-icon si-rejected"><i class="fas fa-times-circle"></i></div>
-            <div class="stat-info">
-                <div class="stat-num" id="cnt-rejected">0</div>
-                <div class="stat-lbl">تم رفضها</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filter tabs -->
-    <div class="filter-tabs">
-        <button class="tab active" onclick="setFilter('all',this)">
-            <i class="fas fa-th-large"></i> الكل
-            <span class="badge" id="tab-all-badge">0</span>
-        </button>
-        <button class="tab" onclick="setFilter('pending',this)">
-            <i class="fas fa-clock"></i> بانتظار المراجعة
-            <span class="badge" id="tab-pending-badge">0</span>
-        </button>
-        <button class="tab" onclick="setFilter('approved',this)">
-            <i class="fas fa-check-circle"></i> تم النشر
-            <span class="badge" id="tab-approved-badge">0</span>
-        </button>
-        <button class="tab" onclick="setFilter('rejected',this)">
-            <i class="fas fa-times-circle"></i> مرفوضة
-            <span class="badge" id="tab-rejected-badge">0</span>
-        </button>
-    </div>
-
-    <!-- Grid -->
-    <div class="listings-grid" id="listingsGrid"></div>
-    <div class="empty-state" id="emptyState" style="display:none;">
-        <i class="fas fa-inbox"></i>
-        <p id="emptyMsg">لا توجد إعلانات بعد</p>
-    </div>
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">TYAR | تيار</div>
+    <div class="login-sub">Admin Panel</div>
+    <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="admin@tyar.sa" autocomplete="email"></div>
+    <div class="field"><label>Password</label><input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="topbar-brand">TYAR Admin</div>
+    <div class="topbar-right">
+      <span class="topbar-email" id="admin-email"></span>
+      <button class="btn btn-ghost" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="showTab('listings')" id="tab-listings">🚗 Car Listings <span class="badge" id="badge-listings">0</span></button>
+    <button class="tab-btn" onclick="showTab('charger')" id="tab-charger">⚡ Charger Bookings <span class="badge" id="badge-charger">0</span></button>
+    <button class="tab-btn" onclick="showTab('maintenance')" id="tab-maintenance">🔧 Maintenance <span class="badge" id="badge-maintenance">0</span></button>
+  </div>
+
+  <!-- Tab: Car Listings -->
+  <div class="tab-panel active" id="panel-listings">
+    <div class="filter-bar" id="listings-filters">
+      <button class="filter-btn active" onclick="filterListings('all',this)">All</button>
+      <button class="filter-btn" onclick="filterListings('pending',this)">⏳ Pending</button>
+      <button class="filter-btn" onclick="filterListings('approved',this)">✓ Approved</button>
+      <button class="filter-btn" onclick="filterListings('rejected',this)">✗ Rejected</button>
+    </div>
+    <div id="listings-container"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+
+  <!-- Tab: Charger Bookings -->
+  <div class="tab-panel" id="panel-charger">
+    <div id="charger-container"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+
+  <!-- Tab: Maintenance -->
+  <div class="tab-panel" id="panel-maintenance">
+    <div id="maintenance-container"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+</div>
 
 <script>
-    const CITY_NAMES = {
-        riyadh:'الرياض', jeddah:'جدة', dammam:'الدمام',
-        makkah:'مكة المكرمة', madinah:'المدينة المنورة', khobar:'الخبر'
-    };
-    const STATUS_LABELS = { pending:'بانتظار المراجعة', approved:'تم النشر', rejected:'مرفوض' };
-    const STATUS_BADGES = { pending:'badge-pending', approved:'badge-approved', rejected:'badge-rejected' };
+const SUPABASE_URL  = 'https://gfqafbubvdrpjgimtert.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmcWFmYnVidmRycGpnaW10ZXJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NTQzMDYsImV4cCI6MjA4ODQzMDMwNn0.v0VCl4BHt28MCHqd0cHiFeVDCv-2i0VL65QPUx4VK70';
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    let currentFilter = 'all';
+// ── Auth ──────────────────────────────────────────────────────────────────────
+client.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('admin-email').textContent = session.user.email;
+    loadAll();
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+  }
+});
 
-    function getListings() {
-        return JSON.parse(localStorage.getItem('tyar_listings') || '[]');
-    }
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  const btn   = document.getElementById('login-btn');
+  const err   = document.getElementById('login-error');
+  err.classList.remove('show');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  const { error } = await client.auth.signInWithPassword({ email, password: pass });
+  if (error) {
+    err.textContent = error.message; err.classList.add('show');
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+}
+async function doLogout() { await client.auth.signOut(); }
+document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-    function saveListings(arr) {
-        localStorage.setItem('tyar_listings', JSON.stringify(arr));
-    }
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+function loadAll() { loadListings(); loadCharger(); loadMaintenance(); }
 
-    function updateStatus(id, status) {
-        const all = getListings();
-        const idx = all.findIndex(l => l.id === id);
-        if (idx === -1) return;
-        all[idx].status = status;
-        saveListings(all);
-        render();
-        showToast(
-            status === 'approved'
-                ? '<i class="fas fa-check-circle"></i> تم قبول الإعلان ونشره في السوق'
-                : '<i class="fas fa-times-circle"></i> تم رفض الإعلان',
-            status === 'approved' ? 'toast-green' : 'toast-red'
-        );
-    }
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function fmt(n) { return n ? Number(n).toLocaleString() : '—'; }
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+function statusStatuses() { return ['pending','contacted','scheduled','completed','cancelled']; }
 
-    function showToast(msg, cls = '') {
-        const t = document.getElementById('toast');
-        t.innerHTML = msg;
-        t.className = 'toast show ' + cls;
-        setTimeout(() => { t.className = 'toast'; }, 3000);
-    }
+// ── Car Listings ──────────────────────────────────────────────────────────────
+let allListings = []; let listingsFilter = 'all';
 
-    function setFilter(filter, btn) {
-        currentFilter = filter;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        btn.classList.add('active');
-        render();
-    }
+async function loadListings() {
+  document.getElementById('listings-container').innerHTML = '<div class="loading"><div class="spinner"></div>Loading listings…</div>';
+  const { data, error } = await client.from('car_listings').select('*').order('created_at', { ascending: false });
+  if (error) { document.getElementById('listings-container').innerHTML = '<div class="empty">Error: ' + error.message + '</div>'; return; }
+  allListings = data || [];
+  document.getElementById('badge-listings').textContent = allListings.filter(l => l.status === 'pending').length;
+  renderListings();
+}
 
-    function formatDate(iso) {
-        const d = new Date(iso);
-        return d.toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-    }
+function filterListings(f, btn) {
+  listingsFilter = f;
+  document.querySelectorAll('#listings-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderListings();
+}
 
-    function render() {
-        const all = getListings();
-        const filtered = currentFilter === 'all' ? all : all.filter(l => l.status === currentFilter);
+function renderListings() {
+  const items = listingsFilter === 'all' ? allListings : allListings.filter(l => l.status === listingsFilter);
+  const el = document.getElementById('listings-container');
+  if (!items.length) { el.innerHTML = '<div class="empty">No listings found.</div>'; return; }
+  el.innerHTML = items.map(l => {
+    const price = l.price ? fmt(l.price) + ' SAR' : (l.price_sar ? fmt(l.price_sar) + ' SAR' : '—');
+    const km = l.km || l.mileage_km;
+    const type = l.type || l.ev_type || 'BEV';
+    return `<div class="card" id="listing-${l.id}">
+      <div class="card-header">
+        <div>
+          <div class="car-title">${l.year || ''} ${l.make} ${l.model}</div>
+          <div class="date-small">Submitted: ${fmtDate(l.created_at)}</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="car-price">${price}</div>
+          <span class="status-badge status-${l.status}">${l.status}</span>
+        </div>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-item"><strong>${l.city||'—'}</strong>City</div>
+        <div class="meta-item"><strong>${km ? fmt(km)+' km':'—'}</strong>Mileage</div>
+        <div class="meta-item"><strong>${type}</strong>Type</div>
+        <div class="meta-item"><strong>${l.range_km ? l.range_km+' km':'—'}</strong>Range</div>
+        <div class="meta-item"><strong>${l.color||'—'}</strong>Color</div>
+      </div>
+      <div class="seller-block">
+        <span>👤 <strong>${l.seller_name}</strong></span>
+        <span>📞 <strong>${l.seller_phone}</strong></span>
+        ${l.seller_email ? `<span>✉️ <strong>${l.seller_email}</strong></span>` : ''}
+      </div>
+      ${l.description ? `<div class="desc-text">📝 ${l.description}</div>` : ''}
+      ${l.admin_note ? `<div class="desc-text" style="color:#f79090">🗒 Note: ${l.admin_note}</div>` : ''}
+      <div class="card-actions">
+        ${l.status === 'pending' ? `
+          <input class="note-input" id="note-${l.id}" placeholder="Rejection note (optional)…">
+          <button class="btn btn-primary" onclick="approveListing(${l.id})">✓ Approve</button>
+          <button class="btn btn-danger"  onclick="rejectListing(${l.id})">✗ Reject</button>
+        ` : ''}
+        ${l.status === 'approved' ? `
+          <button class="btn btn-gold" onclick="publishToMarket(${l.id})">🚀 Move to Live Cars</button>
+        ` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
 
-        // Update stat counters
-        document.getElementById('cnt-all').textContent      = all.length;
-        document.getElementById('cnt-pending').textContent  = all.filter(l=>l.status==='pending').length;
-        document.getElementById('cnt-approved').textContent = all.filter(l=>l.status==='approved').length;
-        document.getElementById('cnt-rejected').textContent = all.filter(l=>l.status==='rejected').length;
+async function approveListing(id) {
+  const { error } = await client.from('car_listings').update({ status:'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
+  if (error) { alert('Error: ' + error.message); return; }
+  loadListings();
+}
+async function rejectListing(id) {
+  const note = document.getElementById('note-'+id)?.value.trim() || null;
+  const { error } = await client.from('car_listings').update({ status:'rejected', admin_note:note, reviewed_at: new Date().toISOString() }).eq('id', id);
+  if (error) { alert('Error: ' + error.message); return; }
+  loadListings();
+}
+async function publishToMarket(id) {
+  const l = allListings.find(x => x.id === id); if (!l) return;
+  const car = { make:l.make, model:l.model, year:l.year, price:l.price||l.price_sar, km:l.km||l.mileage_km||0, type:l.type||l.ev_type||'BEV', range_km:l.range_km, battery_pct:l.battery_pct, image_url:l.image_url, is_active:true };
+  const { error } = await client.from('cars').insert([car]);
+  if (error) { alert('Error publishing: ' + error.message); return; }
+  alert('Car is now live on the marketplace!');
+  loadListings();
+}
 
-        // Update tab badges
-        document.getElementById('tab-all-badge').textContent      = all.length;
-        document.getElementById('tab-pending-badge').textContent  = all.filter(l=>l.status==='pending').length;
-        document.getElementById('tab-approved-badge').textContent = all.filter(l=>l.status==='approved').length;
-        document.getElementById('tab-rejected-badge').textContent = all.filter(l=>l.status==='rejected').length;
+// ── Charger Bookings ──────────────────────────────────────────────────────────
+async function loadCharger() {
+  document.getElementById('charger-container').innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const { data, error } = await client.from('charger_bookings').select('*').order('created_at', { ascending: false });
+  if (error) { document.getElementById('charger-container').innerHTML = '<div class="empty">Error: ' + error.message + '</div>'; return; }
+  const items = data || [];
+  document.getElementById('badge-charger').textContent = items.filter(b => b.status === 'pending').length;
+  if (!items.length) { document.getElementById('charger-container').innerHTML = '<div class="empty">No charger bookings yet.</div>'; return; }
+  document.getElementById('charger-container').innerHTML = items.map(b => {
+    const name = b.name || b.full_name || '—';
+    return `<div class="card">
+      <div class="booking-row">
+        <div class="booking-info">
+          <div class="booking-name">${name}</div>
+          <div class="booking-meta">
+            📞 <strong>${b.phone||'—'}</strong> &nbsp;|&nbsp; 📍 <strong>${b.city||'—'}</strong><br>
+            ⚡ <strong>${b.charger_type||'—'}</strong>${b.charger_power?' · '+b.charger_power:''}<br>
+            💰 <strong>${b.estimated_price ? fmt(b.estimated_price)+' SAR':'—'}</strong><br>
+            ${b.notes?'📝 '+b.notes+'<br>':''}
+            <span class="date-small">📅 ${fmtDate(b.created_at)}</span>
+          </div>
+        </div>
+        <div class="booking-right">
+          <span class="status-badge status-${b.status||'pending'}">${b.status||'pending'}</span>
+          <select class="status-select" onchange="updateChargerStatus(${b.id},this.value)">
+            ${statusStatuses().map(s=>`<option value="${s}" ${b.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function updateChargerStatus(id, status) {
+  const { error } = await client.from('charger_bookings').update({ status }).eq('id', id);
+  if (error) alert('Error: ' + error.message); else loadCharger();
+}
 
-        const grid  = document.getElementById('listingsGrid');
-        const empty = document.getElementById('emptyState');
-        grid.innerHTML = '';
-
-        if (!filtered.length) {
-            empty.style.display = 'block';
-            const msgs = { all:'لا توجد إعلانات حتى الآن', pending:'لا توجد إعلانات بانتظار المراجعة', approved:'لا توجد إعلانات منشورة', rejected:'لا توجد إعلانات مرفوضة' };
-            document.getElementById('emptyMsg').textContent = msgs[currentFilter];
-            return;
-        }
-
-        empty.style.display = 'none';
-
-        // Sort: pending first
-        const sorted = [...filtered].sort((a,b) => {
-            const order = { pending:0, approved:1, rejected:2 };
-            return (order[a.status]??3) - (order[b.status]??3) || b.id - a.id;
-        });
-
-        sorted.forEach(l => {
-            const card = document.createElement('div');
-            card.className = `admin-card status-${l.status}`;
-
-            const isPending  = l.status === 'pending';
-            const isApproved = l.status === 'approved';
-            const isRejected = l.status === 'rejected';
-
-            const actionBtns = isPending ? `
-                <button class="btn-approve" onclick="updateStatus(${l.id},'approved')">
-                    <i class="fas fa-check"></i> قبول ونشر
-                </button>
-                <button class="btn-reject" onclick="updateStatus(${l.id},'rejected')">
-                    <i class="fas fa-times"></i> رفض
-                </button>` : isApproved ? `
-                <button class="btn-undo" onclick="updateStatus(${l.id},'pending')">
-                    <i class="fas fa-undo"></i> إعادة للمراجعة
-                </button>
-                <button class="btn-reject" onclick="updateStatus(${l.id},'rejected')">
-                    <i class="fas fa-times"></i> إلغاء النشر
-                </button>` : `
-                <button class="btn-approve" onclick="updateStatus(${l.id},'approved')">
-                    <i class="fas fa-check"></i> قبول ونشر
-                </button>
-                <button class="btn-undo" onclick="updateStatus(${l.id},'pending')">
-                    <i class="fas fa-undo"></i> إعادة للمراجعة
-                </button>`;
-
-            card.innerHTML = `
-                <div class="card-img">
-                    <img src="${l.photo}" alt="${l.model_display}" loading="lazy">
-                    <span class="card-status-badge ${STATUS_BADGES[l.status]}">${STATUS_LABELS[l.status]}</span>
-                    <span class="card-time"><i class="fas fa-clock"></i> ${formatDate(l.submittedAt)}</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-header">
-                        <div>
-                            <div class="card-model">${l.model_display}</div>
-                            <div class="card-year">${l.year} • ${Number(l.km).toLocaleString()} كم</div>
-                        </div>
-                        <div class="card-price">${Number(l.price_sar).toLocaleString()} ر.س</div>
-                    </div>
-                    <div class="card-specs">
-                        <div class="spec"><i class="fas fa-palette"></i> ${l.color}</div>
-                        <div class="spec"><i class="fas fa-map-marker-alt"></i> ${CITY_NAMES[l.city]||l.city}</div>
-                        <div class="spec"><i class="fas fa-calendar"></i> ${l.year}</div>
-                        <div class="spec"><i class="fas fa-battery-three-quarters"></i> ${l.battery_pct}%</div>
-                    </div>
-                    <div class="battery-row">
-                        <div class="battery-label"><span>صحة البطارية</span><span>${l.battery_pct}%</span></div>
-                        <div class="battery-bar"><div class="battery-fill" style="width:${l.battery_pct}%"></div></div>
-                    </div>
-                    ${l.desc_ar ? `<div class="card-desc">${l.desc_ar}</div>` : ''}
-                    ${l.phone ? `<div class="card-contact"><i class="fas fa-phone"></i> ${l.phone}</div>` : ''}
-                    <div class="card-actions">${actionBtns}</div>
-                </div>`;
-
-            grid.appendChild(card);
-        });
-    }
-
-    // Listen for changes from other tabs (marketplace submits)
-    window.addEventListener('storage', e => {
-        if (e.key === 'tyar_listings') render();
-    });
-
-    render();
+// ── Maintenance Bookings ──────────────────────────────────────────────────────
+async function loadMaintenance() {
+  document.getElementById('maintenance-container').innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const { data, error } = await client.from('maintenance_bookings').select('*').order('created_at', { ascending: false });
+  if (error) { document.getElementById('maintenance-container').innerHTML = '<div class="empty">Error: ' + error.message + '</div>'; return; }
+  const items = data || [];
+  document.getElementById('badge-maintenance').textContent = items.filter(b => b.status === 'pending').length;
+  if (!items.length) { document.getElementById('maintenance-container').innerHTML = '<div class="empty">No maintenance bookings yet.</div>'; return; }
+  document.getElementById('maintenance-container').innerHTML = items.map(b => {
+    const name = b.full_name || b.name || '—';
+    return `<div class="card">
+      <div class="booking-row">
+        <div class="booking-info">
+          <div class="booking-name">${name}</div>
+          <div class="booking-meta">
+            📞 <strong>${b.phone||'—'}</strong> &nbsp;|&nbsp; 📍 <strong>${b.city||'—'}</strong><br>
+            🔧 <strong>${b.service_type||'—'}</strong><br>
+            🚗 <strong>${b.car_model||'—'}</strong>${b.car_year?' ('+b.car_year+')':''}<br>
+            📅 Appt: <strong>${b.preferred_date||b.appt_date||'—'}</strong>${b.time_slot||b.appt_time?' at <strong>'+(b.time_slot||b.appt_time)+'</strong>':''}<br>
+            💰 <strong>${b.estimated_cost?fmt(b.estimated_cost)+' SAR':'—'}</strong><br>
+            ${b.notes?'📝 '+b.notes+'<br>':''}
+            <span class="date-small">Submitted: ${fmtDate(b.created_at)}</span>
+          </div>
+        </div>
+        <div class="booking-right">
+          <span class="status-badge status-${b.status||'pending'}">${b.status||'pending'}</span>
+          <select class="status-select" onchange="updateMaintenanceStatus(${b.id},this.value)">
+            ${statusStatuses().map(s=>`<option value="${s}" ${b.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function updateMaintenanceStatus(id, status) {
+  const { error } = await client.from('maintenance_bookings').update({ status }).eq('id', id);
+  if (error) alert('Error: ' + error.message); else loadMaintenance();
+}
 </script>
 </body>
 </html>

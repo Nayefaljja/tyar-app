@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="header.css">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="supabase.js" defer></script>
+    <script src="supabase.js"></script>
     <style>
         :root {
             --primary: #3CAEA3;
@@ -384,6 +384,28 @@
 
         #whatsapp-float:hover { background: #1ebe5a; transform: scale(1.1); }
 
+        /* Skeleton loader animation */
+        @keyframes skPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .skeleton-card .listing-image-wrap { min-height: 200px; }
+
+        /* Fetch error banner */
+        #fetch-error-banner {
+            display: none;
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+            color: #92400e;
+            align-items: center;
+            gap: 10px;
+        }
+        #fetch-error-banner.show { display: flex; }
+
         html[dir="ltr"] #whatsapp-float { left: auto; right: 24px; }
 
         /* Responsive */
@@ -582,6 +604,226 @@
         }
         .ai-warning.show { display: flex; }
         html[data-theme="dark"] .ai-warning { background: #2d2010; border-color: #b45309; color: #fcd34d; }
+
+        /* ================================================
+           SELL YOUR CAR BUTTON (results bar)
+        ================================================ */
+        .btn-sell-car {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #3CAEA3;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 18px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-sell-car:hover {
+            background: #2a9d8f;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(60,174,163,0.4);
+        }
+
+        /* ================================================
+           SELL-CAR MODAL (id="sell-modal") — dark glassmorphism
+        ================================================ */
+        #sell-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1100;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        #sell-modal-overlay.open { display: flex; }
+
+        #sell-modal {
+            background: rgba(15,39,68,0.95);
+            border: 1px solid rgba(60,174,163,0.3);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 580px;
+            max-height: 92vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+            animation: scSlideUp 0.32s ease;
+            color: #e2e8f0;
+        }
+        @keyframes scSlideUp {
+            from { transform: translateY(28px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        /* Scrollbar styling for dark modal */
+        #sell-modal::-webkit-scrollbar { width: 6px; }
+        #sell-modal::-webkit-scrollbar-track { background: transparent; }
+        #sell-modal::-webkit-scrollbar-thumb { background: rgba(60,174,163,0.35); border-radius: 3px; }
+
+        .sc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px;
+            border-bottom: 1px solid rgba(60,174,163,0.2);
+            position: sticky;
+            top: 0;
+            background: rgba(15,39,68,0.98);
+            border-radius: 16px 16px 0 0;
+            z-index: 2;
+        }
+        .sc-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+        .sc-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(148,163,184,0.4);
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .sc-close:hover { border-color: #ef4444; color: #ef4444; }
+
+        .sc-body { padding: 22px; }
+
+        .sc-fg { margin-bottom: 15px; }
+        .sc-fg label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .sc-fc {
+            width: 100%;
+            padding: 10px 13px;
+            background: rgba(255,255,255,0.06);
+            border: 1.5px solid rgba(148,163,184,0.25);
+            border-radius: 10px;
+            color: #e2e8f0;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.93rem;
+            transition: border-color 0.2s;
+            appearance: none;
+        }
+        .sc-fc::placeholder { color: #64748b; }
+        .sc-fc:focus { outline: none; border-color: #3CAEA3; background: rgba(60,174,163,0.07); }
+        .sc-fc option { background: #0f2744; color: #e2e8f0; }
+        textarea.sc-fc { resize: vertical; }
+
+        .sc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .sc-submit {
+            width: 100%;
+            padding: 13px;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #3CAEA3, #2a9d8f);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .sc-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(60,174,163,0.45);
+        }
+        .sc-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .sc-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: scSpin 0.7s linear infinite;
+            display: none;
+        }
+        @keyframes scSpin { to { transform: rotate(360deg); } }
+
+        .sc-error-msg {
+            display: none;
+            background: rgba(239,68,68,0.12);
+            border: 1px solid rgba(239,68,68,0.4);
+            border-radius: 8px;
+            padding: 9px 13px;
+            font-size: 0.85rem;
+            color: #fca5a5;
+            margin-top: 12px;
+            align-items: center;
+            gap: 8px;
+        }
+        .sc-error-msg.show { display: flex; }
+
+        .sc-success {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 32px 24px;
+            gap: 12px;
+        }
+        .sc-success.show { display: flex; }
+        .sc-success-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22c55e, #4ade80);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #fff;
+            animation: scPopIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+        @keyframes scPopIn { from { transform: scale(0); } to { transform: scale(1); } }
+        .sc-success-ttl { font-size: 1.2rem; font-weight: 800; color: #e2e8f0; }
+        .sc-success-sub { font-size: 0.88rem; color: #94a3b8; line-height: 1.6; }
+        .sc-done-btn {
+            margin-top: 8px;
+            padding: 10px 28px;
+            background: #3CAEA3;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.93rem;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sc-done-btn:hover { background: #2a9d8f; transform: translateY(-2px); }
+
+        @media (max-width: 640px) {
+            #sell-modal { max-width: 90vw; }
+            .sc-row { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -695,212 +937,44 @@
                     <option value="year-desc" data-en="Newest">الأحدث</option>
                     <option value="battery-desc" data-en="Best Battery">أفضل بطارية</option>
                 </select>
+                <button
+                    class="btn-sell-car"
+                    onclick="openSellCarModal()"
+                    data-en='<i class="fas fa-plus"></i> Sell Your Car'
+                    title="List Your Car for Sale / بيع سيارتك">
+                    <i class="fas fa-plus"></i> بيع سيارتك
+                </button>
             </div>
+        </div>
+
+        <!-- Fetch error banner -->
+        <div id="fetch-error-banner">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>تعذّر الاتصال بقاعدة البيانات. يُعرض المحتوى الاحتياطي.</span>
         </div>
 
         <!-- Listings -->
         <div class="listings-grid" id="listingsGrid">
-
-            <div class="listing-card"
-                data-model="tesla" data-price="180000" data-city="riyadh"
-                data-year="2024" data-battery="94">
-                <div class="listing-image-wrap">
-                    <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80" alt="Tesla Model 3">
-                    <span class="listing-badge badge-popular" data-en="Most Popular">الأكثر طلباً</span>
-                    <button class="fav-btn" title="إضافة للمفضلة" onclick="toggleFav(this, event)">
-                        <i class="far fa-heart"></i>
-                    </button>
-                </div>
+            <!-- Skeleton cards shown while fetching from Supabase -->
+            <div class="listing-card skeleton-card" id="sk1" style="pointer-events:none">
+                <div class="listing-image-wrap" style="background:var(--border);animation:skPulse 1.4s ease-in-out infinite"></div>
                 <div class="listing-body">
-                    <div class="listing-header">
-                        <div>
-                            <div class="listing-title">تسلا موديل 3</div>
-                            <div class="listing-year">2024 • 24,000 كم</div>
-                        </div>
-                        <div class="listing-price">180,000 ر.س</div>
-                    </div>
-                    <div class="listing-specs">
-                        <div class="spec-item"><i class="fas fa-bolt"></i> 570 كم مدى</div>
-                        <div class="spec-item"><i class="fas fa-map-marker-alt"></i> الرياض</div>
-                        <div class="spec-item"><i class="fas fa-palette"></i> أبيض</div>
-                    </div>
-                    <div class="battery-health">
-                        <div class="battery-label"><span>صحة البطارية</span><span>94%</span></div>
-                        <div class="battery-bar"><div class="battery-fill" style="width:94%"></div></div>
-                    </div>
-                    <div class="listing-actions">
-                        <button class="btn-contact" onclick="contactSeller('تسلا موديل 3 2024')" data-en="Contact Seller">تواصل مع البائع</button>
-                        <button class="btn-details" onclick="showDetails(this)">التفاصيل</button>
-                    </div>
+                    <div style="height:18px;background:var(--border);border-radius:6px;margin-bottom:10px;animation:skPulse 1.4s ease-in-out infinite"></div>
+                    <div style="height:14px;background:var(--border);border-radius:6px;width:60%;animation:skPulse 1.4s ease-in-out infinite"></div>
                 </div>
             </div>
-
-            <div class="listing-card"
-                data-model="lucid" data-price="290000" data-city="jeddah"
-                data-year="2023" data-battery="98">
-                <div class="listing-image-wrap">
-                    <img src="https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=600&q=80" alt="Lucid Air">
-                    <span class="listing-badge badge-new" data-en="New">جديد</span>
-                    <button class="fav-btn" title="إضافة للمفضلة" onclick="toggleFav(this, event)">
-                        <i class="far fa-heart"></i>
-                    </button>
-                </div>
+            <div class="listing-card skeleton-card" id="sk2" style="pointer-events:none">
+                <div class="listing-image-wrap" style="background:var(--border);animation:skPulse 1.4s ease-in-out infinite 0.2s"></div>
                 <div class="listing-body">
-                    <div class="listing-header">
-                        <div>
-                            <div class="listing-title">لوسيد إير جراند توورنج</div>
-                            <div class="listing-year">2023 • 13,200 كم</div>
-                        </div>
-                        <div class="listing-price">290,000 ر.س</div>
-                    </div>
-                    <div class="listing-specs">
-                        <div class="spec-item"><i class="fas fa-bolt"></i> 836 كم مدى</div>
-                        <div class="spec-item"><i class="fas fa-map-marker-alt"></i> جدة</div>
-                        <div class="spec-item"><i class="fas fa-palette"></i> رمادي</div>
-                    </div>
-                    <div class="battery-health">
-                        <div class="battery-label"><span>صحة البطارية</span><span>98%</span></div>
-                        <div class="battery-bar"><div class="battery-fill" style="width:98%"></div></div>
-                    </div>
-                    <div class="listing-actions">
-                        <button class="btn-contact" onclick="contactSeller('لوسيد إير 2023')" data-en="Contact Seller">تواصل مع البائع</button>
-                        <button class="btn-details" onclick="showDetails(this)">التفاصيل</button>
-                    </div>
+                    <div style="height:18px;background:var(--border);border-radius:6px;margin-bottom:10px;animation:skPulse 1.4s ease-in-out infinite 0.2s"></div>
+                    <div style="height:14px;background:var(--border);border-radius:6px;width:60%;animation:skPulse 1.4s ease-in-out infinite 0.2s"></div>
                 </div>
             </div>
-
-            <div class="listing-card"
-                data-model="nissan" data-price="52000" data-city="dammam"
-                data-year="2023" data-battery="89">
-                <div class="listing-image-wrap">
-                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&q=80" alt="Nissan Leaf">
-                    <span class="listing-badge badge-deal" data-en="Special Deal">عرض مميز</span>
-                    <button class="fav-btn" title="إضافة للمفضلة" onclick="toggleFav(this, event)">
-                        <i class="far fa-heart"></i>
-                    </button>
-                </div>
+            <div class="listing-card skeleton-card" id="sk3" style="pointer-events:none">
+                <div class="listing-image-wrap" style="background:var(--border);animation:skPulse 1.4s ease-in-out infinite 0.4s"></div>
                 <div class="listing-body">
-                    <div class="listing-header">
-                        <div>
-                            <div class="listing-title">نيسان ليف</div>
-                            <div class="listing-year">2023 • 9,000 كم</div>
-                        </div>
-                        <div class="listing-price">52,000 ر.س</div>
-                    </div>
-                    <div class="listing-specs">
-                        <div class="spec-item"><i class="fas fa-bolt"></i> 386 كم مدى</div>
-                        <div class="spec-item"><i class="fas fa-map-marker-alt"></i> الدمام</div>
-                        <div class="spec-item"><i class="fas fa-palette"></i> أزرق</div>
-                    </div>
-                    <div class="battery-health">
-                        <div class="battery-label"><span>صحة البطارية</span><span>89%</span></div>
-                        <div class="battery-bar"><div class="battery-fill" style="width:89%"></div></div>
-                    </div>
-                    <div class="listing-actions">
-                        <button class="btn-contact" onclick="contactSeller('نيسان ليف 2023')" data-en="Contact Seller">تواصل مع البائع</button>
-                        <button class="btn-details" onclick="showDetails(this)">التفاصيل</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="listing-card"
-                data-model="ceer" data-price="165000" data-city="riyadh"
-                data-year="2024" data-battery="100">
-                <div class="listing-image-wrap">
-                    <img src="https://images.unsplash.com/photo-1593941707882-a5bfcf2dd8b4?w=600&q=80" alt="Ceer EV">
-                    <span class="listing-badge badge-new" data-en="New">جديد</span>
-                    <button class="fav-btn" title="إضافة للمفضلة" onclick="toggleFav(this, event)">
-                        <i class="far fa-heart"></i>
-                    </button>
-                </div>
-                <div class="listing-body">
-                    <div class="listing-header">
-                        <div>
-                            <div class="listing-title">سيارة سير الكهربائية</div>
-                            <div class="listing-year">2024 • 5,100 كم</div>
-                        </div>
-                        <div class="listing-price">165,000 ر.س</div>
-                    </div>
-                    <div class="listing-specs">
-                        <div class="spec-item"><i class="fas fa-bolt"></i> 724 كم مدى</div>
-                        <div class="spec-item"><i class="fas fa-map-marker-alt"></i> الرياض</div>
-                        <div class="spec-item"><i class="fas fa-palette"></i> أبيض</div>
-                    </div>
-                    <div class="battery-health">
-                        <div class="battery-label"><span>صحة البطارية</span><span>100%</span></div>
-                        <div class="battery-bar"><div class="battery-fill" style="width:100%"></div></div>
-                    </div>
-                    <div class="listing-actions">
-                        <button class="btn-contact" onclick="contactSeller('سيارة سير 2024')" data-en="Contact Seller">تواصل مع البائع</button>
-                        <button class="btn-details" onclick="showDetails(this)">التفاصيل</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="listing-card"
-                data-model="bmw" data-price="138000" data-city="jeddah"
-                data-year="2022" data-battery="91">
-                <div class="listing-image-wrap">
-                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&q=80" alt="BMW iX">
-                    <button class="fav-btn" title="إضافة للمفضلة" onclick="toggleFav(this, event)">
-                        <i class="far fa-heart"></i>
-                    </button>
-                </div>
-                <div class="listing-body">
-                    <div class="listing-header">
-                        <div>
-                            <div class="listing-title">BMW iX xDrive50</div>
-                            <div class="listing-year">2022 • 31,000 كم</div>
-                        </div>
-                        <div class="listing-price">138,000 ر.س</div>
-                    </div>
-                    <div class="listing-specs">
-                        <div class="spec-item"><i class="fas fa-bolt"></i> 630 كم مدى</div>
-                        <div class="spec-item"><i class="fas fa-map-marker-alt"></i> جدة</div>
-                        <div class="spec-item"><i class="fas fa-palette"></i> أسود</div>
-                    </div>
-                    <div class="battery-health">
-                        <div class="battery-label"><span>صحة البطارية</span><span>91%</span></div>
-                        <div class="battery-bar"><div class="battery-fill" style="width:91%"></div></div>
-                    </div>
-                    <div class="listing-actions">
-                        <button class="btn-contact" onclick="contactSeller('BMW iX 2022')" data-en="Contact Seller">تواصل مع البائع</button>
-                        <button class="btn-details" onclick="showDetails(this)">التفاصيل</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="listing-card"
-                data-model="hyundai" data-price="74000" data-city="khobar"
-                data-year="2022" data-battery="87">
-                <div class="listing-image-wrap">
-                    <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&q=80" alt="Hyundai Ioniq 5">
-                    <span class="listing-badge badge-deal" data-en="Great Value">قيمة مميزة</span>
-                    <button class="fav-btn" title="إضافة للمفضلة" onclick="toggleFav(this, event)">
-                        <i class="far fa-heart"></i>
-                    </button>
-                </div>
-                <div class="listing-body">
-                    <div class="listing-header">
-                        <div>
-                            <div class="listing-title">هيونداي أيونيك 5</div>
-                            <div class="listing-year">2022 • 28,000 كم</div>
-                        </div>
-                        <div class="listing-price">74,000 ر.س</div>
-                    </div>
-                    <div class="listing-specs">
-                        <div class="spec-item"><i class="fas fa-bolt"></i> 481 كم مدى</div>
-                        <div class="spec-item"><i class="fas fa-map-marker-alt"></i> الخبر</div>
-                        <div class="spec-item"><i class="fas fa-palette"></i> أخضر</div>
-                    </div>
-                    <div class="battery-health">
-                        <div class="battery-label"><span>صحة البطارية</span><span>87%</span></div>
-                        <div class="battery-bar"><div class="battery-fill" style="width:87%"></div></div>
-                    </div>
-                    <div class="listing-actions">
-                        <button class="btn-contact" onclick="contactSeller('هيونداي أيونيك 5 2022')" data-en="Contact Seller">تواصل مع البائع</button>
-                        <button class="btn-details" onclick="showDetails(this)">التفاصيل</button>
-                    </div>
+                    <div style="height:18px;background:var(--border);border-radius:6px;margin-bottom:10px;animation:skPulse 1.4s ease-in-out infinite 0.4s"></div>
+                    <div style="height:14px;background:var(--border);border-radius:6px;width:60%;animation:skPulse 1.4s ease-in-out infinite 0.4s"></div>
                 </div>
             </div>
 
@@ -1098,6 +1172,132 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- ================================================ LIST YOUR CAR FOR SALE MODAL ================================================ -->
+    <div id="sell-modal-overlay" onclick="handleSellModalOverlayClick(event)">
+        <div id="sell-modal" role="dialog" aria-modal="true" aria-labelledby="sell-modal-title">
+
+            <div class="sc-header">
+                <span class="sc-title" id="sell-modal-title">
+                    List Your Car for Sale / أضف سيارتك للبيع
+                </span>
+                <button class="sc-close" onclick="closeSellCarModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Success state (hidden until submission succeeds) -->
+            <div class="sc-success" id="sc-success-panel">
+                <div class="sc-success-icon"><i class="fas fa-check"></i></div>
+                <div class="sc-success-ttl">تم استلام طلبك! / Received!</div>
+                <div class="sc-success-sub">
+                    تم استلام طلبك! سيتم مراجعته خلال 24 ساعة.<br>
+                    Your listing has been received! It will be reviewed within 24 hours.
+                </div>
+                <button class="sc-done-btn" onclick="closeSellCarModal()">رائع، شكراً! / Done</button>
+            </div>
+
+            <!-- Form (hidden on success) -->
+            <form class="sc-body" id="sc-form" onsubmit="handleSellCarSubmit(event)" novalidate>
+
+                <div class="sc-row">
+                    <div class="sc-fg">
+                        <label>Make / الشركة المصنعة <span style="color:#ef4444">*</span></label>
+                        <input type="text" class="sc-fc" id="sc-make" placeholder="e.g. Tesla, BMW, BYD" required>
+                    </div>
+                    <div class="sc-fg">
+                        <label>Model / الطراز <span style="color:#ef4444">*</span></label>
+                        <input type="text" class="sc-fc" id="sc-model-name" placeholder="e.g. Model 3, iX, Atto 3" required>
+                    </div>
+                </div>
+
+                <div class="sc-row">
+                    <div class="sc-fg">
+                        <label>Year / سنة الصنع <span style="color:#ef4444">*</span></label>
+                        <input type="number" class="sc-fc" id="sc-year" placeholder="2024" min="2015" max="2026" required>
+                    </div>
+                    <div class="sc-fg">
+                        <label>Price in SAR / السعر (ر.س) <span style="color:#ef4444">*</span></label>
+                        <input type="number" class="sc-fc" id="sc-price" placeholder="e.g. 185000" min="1" required>
+                    </div>
+                </div>
+
+                <div class="sc-row">
+                    <div class="sc-fg">
+                        <label>Mileage / الكيلومترات (كم)</label>
+                        <input type="number" class="sc-fc" id="sc-mileage" placeholder="0" min="0" value="0">
+                    </div>
+                    <div class="sc-fg">
+                        <label>Type / نوع المحرك</label>
+                        <select class="sc-fc" id="sc-type">
+                            <option value="BEV">BEV — كهربائي بالكامل</option>
+                            <option value="PHEV">PHEV — هجين قابل للشحن</option>
+                            <option value="FCEV">FCEV — خلية وقود هيدروجين</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sc-row">
+                    <div class="sc-fg">
+                        <label>Estimated Range / المدى التقديري (كم)</label>
+                        <input type="number" class="sc-fc" id="sc-range" placeholder="e.g. 500" min="0">
+                    </div>
+                    <div class="sc-fg">
+                        <label>Color / اللون</label>
+                        <input type="text" class="sc-fc" id="sc-color" placeholder="e.g. White / أبيض">
+                    </div>
+                </div>
+
+                <div class="sc-fg">
+                    <label>City / المدينة</label>
+                    <select class="sc-fc" id="sc-city">
+                        <option value="الرياض">الرياض — Riyadh</option>
+                        <option value="جدة">جدة — Jeddah</option>
+                        <option value="الدمام">الدمام — Dammam</option>
+                        <option value="مكة">مكة — Makkah</option>
+                        <option value="المدينة">المدينة — Madinah</option>
+                        <option value="أبها">أبها — Abha</option>
+                        <option value="تبوك">تبوك — Tabuk</option>
+                    </select>
+                </div>
+
+                <div class="sc-fg">
+                    <label>Description / الوصف</label>
+                    <textarea class="sc-fc" id="sc-description" rows="3" maxlength="500"
+                        placeholder="أضف وصفاً موجزاً للسيارة / Add a brief description of the car…"></textarea>
+                </div>
+
+                <div class="sc-row">
+                    <div class="sc-fg">
+                        <label>Seller Name / اسم البائع <span style="color:#ef4444">*</span></label>
+                        <input type="text" class="sc-fc" id="sc-seller-name" placeholder="الاسم الكامل" required>
+                    </div>
+                    <div class="sc-fg">
+                        <label>Seller Phone / رقم الجوال <span style="color:#ef4444">*</span></label>
+                        <input type="tel" class="sc-fc" id="sc-seller-phone" placeholder="05xxxxxxxx" dir="ltr" required>
+                    </div>
+                </div>
+
+                <div class="sc-fg">
+                    <label>Seller Email / البريد الإلكتروني (اختياري)</label>
+                    <input type="email" class="sc-fc" id="sc-seller-email" placeholder="example@email.com" dir="ltr">
+                </div>
+
+                <!-- Error message -->
+                <div class="sc-error-msg" id="sc-error-msg">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="sc-error-text">حدث خطأ. يرجى المحاولة مجدداً.</span>
+                </div>
+
+                <button type="submit" class="sc-submit" id="sc-submit-btn">
+                    <div class="sc-spinner" id="sc-spinner"></div>
+                    <i class="fas fa-paper-plane" id="sc-submit-icon"></i>
+                    <span id="sc-submit-label">Submit for Review / إرسال للمراجعة</span>
+                </button>
+
+            </form>
         </div>
     </div>
 
@@ -1642,18 +1842,135 @@ Analyze the car in this image. Reply with ONLY a raw JSON object — absolutely 
     }
 
     /* ================================================
-       LOAD APPROVED LISTINGS FROM LOCALSTORAGE
+       STATIC FALLBACK CARS (shown if Supabase returns no data)
     ================================================ */
-    // allCards must be declared BEFORE loadApprovedListings so push() works correctly
-    const allCards = Array.from(document.querySelectorAll('.listing-card[data-model]'));
+    const STATIC_CARS = [
+        { id:'s1', make:'تسلا موديل 3',         model_key:'tesla',   year:2024, price:180000, city:'riyadh', battery_health:94,  range_km:570, color:'أبيض',  image_url:'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80', badge:'الأكثر طلباً', badge_cls:'badge-popular', mileage_km:24000 },
+        { id:'s2', make:'لوسيد إير جراند توورنج', model_key:'lucid',  year:2023, price:290000, city:'jeddah', battery_health:98,  range_km:836, color:'رمادي', image_url:'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=600&q=80', badge:'جديد',       badge_cls:'badge-new',     mileage_km:13200 },
+        { id:'s3', make:'نيسان ليف',              model_key:'nissan',  year:2023, price:52000,  city:'dammam', battery_health:89,  range_km:386, color:'أزرق',  image_url:'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&q=80', badge:'عرض مميز',  badge_cls:'badge-deal',    mileage_km:9000  },
+        { id:'s4', make:'سيارة سير الكهربائية',   model_key:'ceer',    year:2024, price:165000, city:'riyadh', battery_health:100, range_km:724, color:'أبيض',  image_url:'https://images.unsplash.com/photo-1593941707882-a5bfcf2dd8b4?w=600&q=80', badge:'جديد',       badge_cls:'badge-new',     mileage_km:5100  },
+        { id:'s5', make:'BMW iX xDrive50',         model_key:'bmw',     year:2022, price:138000, city:'jeddah', battery_health:91,  range_km:630, color:'أسود',  image_url:'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&q=80', badge:null,          badge_cls:null,            mileage_km:31000 },
+        { id:'s6', make:'هيونداي أيونيك 5',       model_key:'hyundai', year:2022, price:74000,  city:'khobar', battery_health:87,  range_km:481, color:'أخضر',  image_url:'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&q=80', badge:'قيمة مميزة', badge_cls:'badge-deal',    mileage_km:28000 },
+    ];
 
-    // Assign stable IDs to static cards for favorites persistence
-    allCards.forEach(function(card, i) {
-        card.querySelectorAll('.fav-btn').forEach(function(btn) {
-            btn.dataset.favId = 'static-' + i;
+    /* ================================================
+       BUILD A CARD ELEMENT FROM A CAR RECORD
+    ================================================ */
+    function buildCarCard(car) {
+        const favId  = 'car-' + car.id;
+        const favs   = getFavs();
+        const isFav  = favs.includes(favId);
+
+        const make       = car.make || car.title || (car.brand ? car.brand + ' ' + (car.model || '') : 'سيارة كهربائية');
+        const year       = car.year || '';
+        const price      = car.price  !== undefined ? Number(car.price).toLocaleString('ar-SA') : '–';
+        const battery    = car.battery_health !== undefined ? car.battery_health : (car.battery_pct || '–');
+        const rangeKm    = car.range_km  || '';
+        const mileage    = car.mileage_km !== undefined ? Number(car.mileage_km).toLocaleString('ar-SA') : '';
+        const cityVal    = car.city || '';
+        const cityDisp   = CITY_NAMES[cityVal] || cityVal;
+        const color      = car.color || '';
+        const imgSrc     = car.image_url || 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80';
+        const badge      = car.badge || null;
+        const badgeCls   = car.badge_cls || 'badge-new';
+        const modelKey   = car.model_key || 'other';
+
+        const card = document.createElement('div');
+        card.className = 'listing-card';
+        card.dataset.model   = modelKey;
+        card.dataset.price   = car.price || 0;
+        card.dataset.city    = cityVal;
+        card.dataset.year    = String(year);
+        card.dataset.battery = String(battery);
+
+        card.innerHTML =
+            '<div class="listing-image-wrap">' +
+                '<img src="' + imgSrc + '" alt="' + make + '" loading="lazy" onerror="this.src=\'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80\'">' +
+                (badge ? '<span class="listing-badge ' + badgeCls + '">' + badge + '</span>' : '') +
+                '<button class="fav-btn' + (isFav ? ' active' : '') + '" data-fav-id="' + favId + '" title="إضافة للمفضلة" onclick="toggleFav(this,event)">' +
+                    '<i class="' + (isFav ? 'fas' : 'far') + ' fa-heart"></i>' +
+                '</button>' +
+            '</div>' +
+            '<div class="listing-body">' +
+                '<div class="listing-header">' +
+                    '<div>' +
+                        '<div class="listing-title">' + make + '</div>' +
+                        '<div class="listing-year">' + year + (mileage ? ' • ' + mileage + ' كم' : '') + '</div>' +
+                    '</div>' +
+                    '<div class="listing-price">' + price + ' ر.س</div>' +
+                '</div>' +
+                '<div class="listing-specs">' +
+                    (rangeKm ? '<div class="spec-item"><i class="fas fa-bolt"></i> ' + rangeKm + ' كم مدى</div>' : '') +
+                    (cityDisp ? '<div class="spec-item"><i class="fas fa-map-marker-alt"></i> ' + cityDisp + '</div>' : '') +
+                    (color   ? '<div class="spec-item"><i class="fas fa-palette"></i> ' + color + '</div>' : '') +
+                '</div>' +
+                '<div class="battery-health">' +
+                    '<div class="battery-label"><span>صحة البطارية</span><span>' + battery + '%</span></div>' +
+                    '<div class="battery-bar"><div class="battery-fill" style="width:' + battery + '%"></div></div>' +
+                '</div>' +
+                '<div class="listing-actions">' +
+                    '<button class="btn-contact" onclick="contactSeller(\'' + make.replace(/'/g,"\\'") + ' ' + year + '\')" data-en="Contact Seller">تواصل مع البائع</button>' +
+                    '<button class="btn-details" onclick="showDetails(this)">التفاصيل</button>' +
+                '</div>' +
+            '</div>';
+
+        return card;
+    }
+
+    /* ================================================
+       REMOVE SKELETON CARDS
+    ================================================ */
+    function removeSkeletons() {
+        document.querySelectorAll('.skeleton-card').forEach(function(el) { el.remove(); });
+    }
+
+    /* ================================================
+       RENDER CARS INTO THE GRID
+    ================================================ */
+    const allCards = [];
+
+    function renderCars(cars) {
+        removeSkeletons();
+        const grid     = document.getElementById('listingsGrid');
+        const noResult = document.getElementById('noResults');
+
+        cars.forEach(function(car) {
+            const card = buildCarCard(car);
+            grid.insertBefore(card, noResult);
+            allCards.push(card);
         });
-    });
 
+        document.getElementById('results-count').textContent = allCards.length;
+        restoreFavs();
+    }
+
+    /* ================================================
+       FETCH FROM SUPABASE ON PAGE LOAD
+    ================================================ */
+    (async function loadMarketplace() {
+        try {
+            const cars = await window.tyarDB.fetchCars();
+            if (cars && cars.length > 0) {
+                renderCars(cars);
+            } else {
+                // DB is empty — fall back to static demo data
+                renderCars(STATIC_CARS);
+            }
+        } catch (err) {
+            console.error('[TYAR] fetchCars failed:', err.message);
+            // Show error banner and fall back to static demo data
+            const banner = document.getElementById('fetch-error-banner');
+            if (banner) banner.classList.add('show');
+            renderCars(STATIC_CARS);
+        }
+
+        // After render, also load any locally approved listings from sell modal
+        loadApprovedListings();
+    })();
+
+    /* ================================================
+       LOAD APPROVED LISTINGS FROM LOCALSTORAGE (sell modal)
+    ================================================ */
     function loadApprovedListings() {
         let listings = [];
         try {
@@ -1667,58 +1984,28 @@ Analyze the car in this image. Reply with ONLY a raw JSON object — absolutely 
         const noResult = document.getElementById('noResults');
 
         approved.forEach(function(l) {
-            const card = document.createElement('div');
-            card.className = 'listing-card';
-            card.dataset.model   = l.model_key  || 'other';
-            card.dataset.price   = l.price_sar  || '0';
-            card.dataset.city    = l.city        || '';
-            card.dataset.year    = l.year        || '2023';
-            card.dataset.battery = l.battery_pct || '85';
-            const favId  = 'dynamic-' + l.id;
-            const favs   = getFavs();
-            const isFav  = favs.includes(favId);
-            const displayPhone = l.phone || '966500000000';
-            const km = isNaN(Number(l.km)) ? l.km : Number(l.km).toLocaleString('ar-SA');
-            const priceDisplay = isNaN(Number(l.price_sar)) ? l.price_sar : Number(l.price_sar).toLocaleString('ar-SA');
-            card.innerHTML =
-                '<div class="listing-image-wrap">' +
-                    '<img src="' + (l.photo || '') + '" alt="' + l.model_display + '" onerror="this.src=\'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80\'">' +
-                    '<span class="listing-badge badge-new" data-en="New">جديد</span>' +
-                    '<button class="fav-btn' + (isFav ? ' active' : '') + '" data-fav-id="' + favId + '" title="إضافة للمفضلة" onclick="toggleFav(this,event)">' +
-                        '<i class="' + (isFav ? 'fas' : 'far') + ' fa-heart"></i>' +
-                    '</button>' +
-                '</div>' +
-                '<div class="listing-body">' +
-                    '<div class="listing-header">' +
-                        '<div>' +
-                            '<div class="listing-title">' + l.model_display + '</div>' +
-                            '<div class="listing-year">' + l.year + ' \u2022 ' + km + ' كم</div>' +
-                        '</div>' +
-                        '<div class="listing-price">' + priceDisplay + ' ر.س</div>' +
-                    '</div>' +
-                    '<div class="listing-specs">' +
-                        '<div class="spec-item"><i class="fas fa-map-marker-alt"></i> ' + (CITY_NAMES[l.city] || l.city) + '</div>' +
-                        '<div class="spec-item"><i class="fas fa-palette"></i> ' + (l.color || '') + '</div>' +
-                    '</div>' +
-                    '<div class="battery-health">' +
-                        '<div class="battery-label"><span>صحة البطارية</span><span>' + (l.battery_pct || '–') + '%</span></div>' +
-                        '<div class="battery-bar"><div class="battery-fill" style="width:' + (l.battery_pct || 85) + '%"></div></div>' +
-                    '</div>' +
-                    '<div class="listing-actions">' +
-                        '<button class="btn-contact" onclick="contactSeller(\'' + l.model_display.replace(/'/g, "\\'") + ' ' + l.year + '\', \'' + displayPhone + '\')">تواصل مع البائع</button>' +
-                        '<button class="btn-details" onclick="showDetails(this)">التفاصيل</button>' +
-                    '</div>' +
-                '</div>';
+            const car = {
+                id:           'local-' + l.id,
+                make:         l.model_display || 'سيارة كهربائية',
+                model_key:    l.model_key || 'other',
+                year:         l.year,
+                price:        l.price_sar,
+                city:         l.city,
+                battery_health: l.battery_pct,
+                mileage_km:   l.km,
+                color:        l.color,
+                image_url:    l.photo,
+                badge:        'جديد',
+                badge_cls:    'badge-new'
+            };
+            const card = buildCarCard(car);
             grid.insertBefore(card, noResult);
             allCards.push(card);
         });
+
+        document.getElementById('results-count').textContent = allCards.length;
+        restoreFavs();
     }
-
-    loadApprovedListings();
-    restoreFavs();
-
-    // Update initial count
-    document.getElementById('results-count').textContent = allCards.length;
 
     /* ================================================
        DETAILS BUTTON — expand / collapse description
@@ -1814,6 +2101,140 @@ Analyze the car in this image. Reply with ONLY a raw JSON object — absolutely 
 
         // Re-append sorted cards before the noResults sentinel
         sorted.forEach(function(card) { grid.insertBefore(card, noResult); });
+    }
+
+    /* ================================================
+       LIST YOUR CAR FOR SALE MODAL  (id="sell-modal")
+    ================================================ */
+    function openSellCarModal() {
+        var overlay = document.getElementById('sell-modal-overlay');
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        // Reset to form view in case it was left on success
+        resetSellCarModal();
+    }
+
+    function closeSellCarModal() {
+        var overlay = document.getElementById('sell-modal-overlay');
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+        resetSellCarModal();
+    }
+
+    function handleSellModalOverlayClick(e) {
+        // Close only when clicking the backdrop itself, not the modal card
+        if (e.target === document.getElementById('sell-modal-overlay')) {
+            closeSellCarModal();
+        }
+    }
+
+    function resetSellCarModal() {
+        var form         = document.getElementById('sc-form');
+        var successPanel = document.getElementById('sc-success-panel');
+        var errorMsg     = document.getElementById('sc-error-msg');
+        var submitBtn    = document.getElementById('sc-submit-btn');
+        var spinner      = document.getElementById('sc-spinner');
+        var icon         = document.getElementById('sc-submit-icon');
+
+        if (form)         { form.reset(); form.style.display = ''; }
+        if (successPanel) { successPanel.classList.remove('show'); }
+        if (errorMsg)     { errorMsg.classList.remove('show'); }
+        if (submitBtn)    { submitBtn.disabled = false; }
+        if (spinner)      { spinner.style.display = 'none'; }
+        if (icon)         { icon.style.display = ''; }
+    }
+
+    async function handleSellCarSubmit(e) {
+        e.preventDefault();
+
+        var makeEl        = document.getElementById('sc-make');
+        var modelNameEl   = document.getElementById('sc-model-name');
+        var yearEl        = document.getElementById('sc-year');
+        var priceEl       = document.getElementById('sc-price');
+        var mileageEl     = document.getElementById('sc-mileage');
+        var typeEl        = document.getElementById('sc-type');
+        var rangeEl       = document.getElementById('sc-range');
+        var colorEl       = document.getElementById('sc-color');
+        var cityEl        = document.getElementById('sc-city');
+        var descEl        = document.getElementById('sc-description');
+        var sellerNameEl  = document.getElementById('sc-seller-name');
+        var sellerPhoneEl = document.getElementById('sc-seller-phone');
+        var sellerEmailEl = document.getElementById('sc-seller-email');
+        var submitBtn     = document.getElementById('sc-submit-btn');
+        var spinner       = document.getElementById('sc-spinner');
+        var icon          = document.getElementById('sc-submit-icon');
+        var errorDiv      = document.getElementById('sc-error-msg');
+        var errorText     = document.getElementById('sc-error-text');
+        var successPanel  = document.getElementById('sc-success-panel');
+        var form          = document.getElementById('sc-form');
+
+        // Basic client-side validation
+        var make       = makeEl.value.trim();
+        var modelName  = modelNameEl.value.trim();
+        var year       = parseInt(yearEl.value, 10);
+        var price      = parseInt(priceEl.value, 10);
+        var phone      = sellerPhoneEl.value.trim();
+        var sellerName = sellerNameEl.value.trim();
+
+        if (!make || !modelName || !sellerName) {
+            errorText.textContent = 'يرجى ملء جميع الحقول المطلوبة. / Please fill in all required fields.';
+            errorDiv.classList.add('show');
+            return;
+        }
+        if (isNaN(year) || year < 2015 || year > 2026) {
+            errorText.textContent = 'يرجى إدخال سنة صنع صحيحة بين 2015 و 2026. / Please enter a valid year between 2015 and 2026.';
+            errorDiv.classList.add('show');
+            return;
+        }
+        if (isNaN(price) || price <= 0) {
+            errorText.textContent = 'يرجى إدخال سعر صحيح. / Please enter a valid price.';
+            errorDiv.classList.add('show');
+            return;
+        }
+        if (!phone || !/^05\d{8}$/.test(phone)) {
+            errorText.textContent = 'يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05 (10 أرقام). / Please enter a valid Saudi mobile number starting with 05.';
+            errorDiv.classList.add('show');
+            return;
+        }
+
+        errorDiv.classList.remove('show');
+
+        // Disable button & show spinner
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        icon.style.display    = 'none';
+
+        var payload = {
+            make:         make,
+            model:        modelName,
+            year:         year,
+            price_sar:    price,
+            mileage_km:   parseInt(mileageEl.value, 10)  || 0,
+            ev_type:      typeEl.value,
+            range_km:     parseInt(rangeEl.value, 10)    || null,
+            color:        colorEl.value.trim()           || null,
+            city:         cityEl.value,
+            description:  descEl.value.trim()            || null,
+            seller_name:  sellerName,
+            seller_phone: phone,
+            seller_email: sellerEmailEl.value.trim()     || null,
+            status:       'pending'
+        };
+
+        try {
+            await window.tyarDB.submitCarListing(payload);
+            // Success — hide form, show success panel
+            form.style.display = 'none';
+            successPanel.classList.add('show');
+        } catch (err) {
+            console.error('[TYAR] submitCarListing failed:', err);
+            var msg = (err && err.message) ? err.message : 'حدث خطأ غير متوقع.';
+            errorText.textContent = 'خطأ: ' + msg;
+            errorDiv.classList.add('show');
+            submitBtn.disabled    = false;
+            spinner.style.display = 'none';
+            icon.style.display    = '';
+        }
     }
     </script>
     <script src="lang.js"></script>
